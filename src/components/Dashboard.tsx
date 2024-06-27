@@ -1,10 +1,12 @@
 'use client';
 
 import { FC, useEffect } from 'react';
-import { useCountdown } from '@/hooks/use-countdown';
+import clsx from 'clsx';
+
 import { Button } from './ui/button';
 import { SvgPlus } from './icons/plus';
-import clsx from 'clsx';
+
+import { useCountdown } from '@/hooks/use-countdown';
 import { useLocalStorageState } from '@/hooks/use-storage';
 import { TOTAL_TIME } from '@/constants/constants';
 import { StatisticsProps, useTimerStore } from '@/store/timer-store';

@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
-import './globals.scss';
-import { Header } from '@/components/Header';
 import clsx from 'clsx';
+
+import './globals.scss';
+
+import { Header } from '@/components/Header';
 
 const roboto = Roboto({
   subsets: ['cyrillic', 'latin'],

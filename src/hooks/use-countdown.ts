@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
+
 import { useLocalStorageState } from './use-storage';
+
 import { TOTAL_TIME } from '@/constants/constants';
 import { StatisticsProps, useTimerStore } from '@/store/timer-store';
 import { TasksArrayProps, useTasksStore } from '@/store/tasks-store';

@@ -1,6 +1,8 @@
-import { localStorageWrapper } from '@/storage/storage';
 import { SetStateAction, useCallback, useState } from 'react';
+
 import { useLatest } from './use-latest';
+
+import { localStorageWrapper } from '@/storage/storage';
 
 type AnyFunction = (...args: any[]) => any;
 

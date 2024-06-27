@@ -1,19 +1,25 @@
 'use client';
 
-import { Chart } from '@/components/Chart';
+import { useEffect, useState } from 'react';
+
 import { Widget } from '@/components/Widget';
-import { SvgArrow } from '@/components/icons/arrow';
 import { SvgFocus } from '@/components/icons/focus';
 import { SvgPause } from '@/components/icons/pause';
 import { SvgPomodoro } from '@/components/icons/pomodoro';
 import { SvgPomodoroDefault } from '@/components/icons/pomodoro-default';
 import { SvgStop } from '@/components/icons/stop';
-import { Select } from '@/components/ui/select';
 import { useLocalStorageState } from '@/hooks/use-storage';
 import { StatisticsProps, useTimerStore } from '@/store/timer-store';
-import { getDayOfWeek } from '@/utils/get-day-of-week';
-import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { SvgArrow } from '@/components/icons/arrow';
+import { cn } from '@/lib/utils';
+import { STATISTICS_DATA } from '@/constants/constants';
+import { getDayOfWeek, getWeeksData } from '@/utils/get-date';
 
 export default function StatisticsPage() {
   const { statisticArray, setStatisticArray } = useTimerStore();
@@ -23,82 +29,40 @@ export default function StatisticsPage() {
     [],
   );
 
-  const [currentPeriod, setCurrentPeriod] = useState('current');
-  const [filteredData, setFilteredData] = useState([]);
+  const [label, setLabel] = useState('Эта неделя');
+  const [open, setMenuOpen] = useState(false);
+  const [filteredData, setFilteredData] = useState(STATISTICS_DATA);
+
+  const onOpenChange = () => setMenuOpen(!open);
 
   const dayOfWeek = getDayOfWeek();
 
   useEffect(() => {
-    storageStaistics.length !== 0 && setStatisticArray(storageStaistics);
-
-    const currentDate = new Date();
-    const currentDay = currentDate.getDay(); // Получаем текущий день недели (0 - воскресенье, 1 - понедельник, ..., 6 - суббота)
-    const endDate = new Date(currentDate);
-
-    endDate.setHours(0, 0, 0, 0); // Обнуляем часы для корректного сравнения
-
-    switch (currentPeriod) {
-      case 'current':
-        endDate.setDate(currentDate.getDate());
-        break;
-      case 'previous':
-        endDate.setDate(currentDate.getDate() - currentDay - 6); // Начинаем с прошлого понедельника
-        break;
-      case 'twoWeeksAgo':
-        endDate.setDate(currentDate.getDate() - currentDay - 13); // Начинаем с понедельника две недели назад
-        break;
-      default:
-        break;
+    if (storageStaistics.length !== 0) {
+      setStatisticArray(storageStaistics);
+      setFilteredData(getWeeksData(STATISTICS_DATA, label));
     }
-
-    const filtered: any = statisticArray.filter(
-      (item) => new Date(item.date) >= endDate && new Date(item.date) <= currentDate,
-    );
-    setFilteredData(filtered);
-  }, [currentPeriod]);
-
-  const handlePeriodChange = (period: any) => {
-    setCurrentPeriod(period);
-  };
-
-  const options = [
-    {label: 'Эта неделя', value: 1},
-    {label: 'Прошлая неделя', value: 2},
-    {label: '2 недели назад', value: 3},
-  ]
-
-  const [value, setValue] = useState<typeof options[0] | undefined>(options[0])
+  }, [label, storageStaistics]);
 
   return (
     <div className='px-[80px] pt-[88px]'>
       <div className='flex items-center justify-between mb-8'>
         <h1 className='font-bold text-2xl dark:text-[#ECF0F1]'>Ваша активность</h1>
-        <Select options={options} value={value} onChange={o => setValue(o)}/>
-        {/* <div className='relative z-10 border'>
-          <button
-            onClick={() => handlePeriodChange('current')}
-            className='w-[370px] py-5 px-4 text-base font-normal bg-[#f5f5f5] dark:bg-[#2C3E50] flex justify-between items-center'
-          >
-            Эта неделя
-            <SvgArrow className={'dark:text-[#3498DB] text-[#B7280F]'} />
-          </button>
-          {currentPeriod === 'current' && (
-            <div className='flex flex-col absolute border right-[-1px]'>
-            <button
-              onClick={() => handlePeriodChange('previous')}
-              className='w-[370px] py-5 px-4 text-base font-normal bg-[#F4F4F4] dark:bg-[#2C3E50] flex justify-between items-center'
-            >
+        <DropdownMenu onOpenChange={onOpenChange}>
+          <DropdownMenuTrigger className='border relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-gray-100 focus:text-gray-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:focus:bg-gray-800 dark:focus:text-gray-50'>
+            {label}
+            <SvgArrow className={cn('ml-2 h-3 w-3 transition', open && 'rotate-180')} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={() => setLabel('Эта неделя')}>Эта неделя</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setLabel('Прошлая неделя')}>
               Прошлая неделя
-            </button>
-            <button
-              onClick={() => handlePeriodChange('twoWeeksAgo')}
-              className='w-[370px] py-5 px-4 text-base font-normal bg-[#F4F4F4] dark:bg-[#2C3E50] flex justify-between items-center'
-            >
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setLabel('2 недели назад')}>
               2 недели назад
-            </button>
-          </div>
-          )}
-        </div> */}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className='flex mb-6'>
@@ -109,7 +73,7 @@ export default function StatisticsPage() {
               {'Вы работали над задачами в течение '}
               <span className='text-[#DC3E22] font-bold dark:text-[#E74C3C]'>
                 {statisticArray.length !== 0 &&
-                  statisticArray[statisticArray.length - 1].workingTime}
+                  statisticArray[statisticArray.length - 1].workingTime}{' '}
                 минуты
               </span>
             </div>
@@ -132,82 +96,84 @@ export default function StatisticsPage() {
             {statisticArray && (
               <span className='bg-[#DC3E22] text-white py-2 text-center dark:text-[#ECF0F1]'>
                 {statisticArray.length !== 0 &&
-                  statisticArray[statisticArray.length - 1].successTaskCount}
+                  statisticArray[statisticArray.length - 1].successTaskCount}{' '}
                 помидора
               </span>
             )}
           </div>
         </div>
 
-        {/* <Chart statistic={statisticArray} /> */}
-
         <div className='w-full min-h-[471px] pt-11 bg-[#F4F4F4] dark:bg-[#2C3E50] overflow-hidden relative'>
           <div className='flex gap-8 pl-14'>
             <span className=' h-[375px] flex items-end w-[77px]'>
               <span
-                className={clsx(
-                  'w-full h-[300px]',
+                style={{ height: `${filteredData[0].value}px` }}
+                className={cn(
+                  'w-full',
                   dayOfWeek === 'Понедельник' ? 'bg-[#DC3E22]' : 'bg-[#EA8A79]',
                 )}
-              ></span>
+              />
             </span>
             <span className=' h-[375px] flex items-end w-[77px]'>
               <span
-                className={clsx(
-                  'w-full h-[300px]',
+                style={{ height: `${filteredData[1].value}px` }}
+                className={cn(
+                  'w-full',
                   dayOfWeek === 'Вторник' ? 'bg-[#DC3E22]' : 'bg-[#EA8A79]',
                 )}
               ></span>
             </span>
             <span className=' h-[375px] flex items-end w-[77px]'>
               <span
-                className={clsx(
-                  'w-full h-[300px]',
-                  dayOfWeek === 'Среда' ? 'bg-[#DC3E22]' : 'bg-[#EA8A79]',
-                )}
+                style={{ height: `${filteredData[2].value}px` }}
+                className={cn('w-full', dayOfWeek === 'Среда' ? 'bg-[#DC3E22]' : 'bg-[#EA8A79]')}
               ></span>
             </span>
             <span className=' h-[375px] flex items-end w-[77px]'>
               <span
-                className={clsx(
-                  'w-full h-[300px]',
+                style={{ height: `${filteredData[4].value}px` }}
+                className={cn(
+                  'w-full ',
                   dayOfWeek === 'Четверг' ? 'bg-[#DC3E22]' : 'bg-[#EA8A79]',
                 )}
               ></span>
             </span>
             <span className=' h-[375px] flex items-end w-[77px]'>
               <span
-                className={clsx(
-                  'w-full h-[300px]',
+                style={{ height: `${filteredData[3].value}px` }}
+                className={cn(
+                  'w-full',
                   dayOfWeek === 'Пятница' ? 'bg-[#DC3E22]' : 'bg-[#EA8A79]',
                 )}
               ></span>
             </span>
             <span className=' h-[375px] flex items-end w-[77px]'>
               <span
-                className={clsx(
-                  'w-full h-[300px]',
+                style={{ height: `${filteredData[5].value}px` }}
+                className={cn(
+                  'w-full',
                   dayOfWeek === 'Суббота' ? 'bg-[#DC3E22]' : 'bg-[#EA8A79]',
                 )}
               ></span>
             </span>
             <span className=' h-[375px] flex items-end w-[77px]'>
               <span
-                className={clsx(
-                  'w-full h-[300px]',
+                style={{ height: `${filteredData[6].value}px` }}
+                className={cn(
+                  'w-full',
                   dayOfWeek === 'Воскресенье' ? 'bg-[#DC3E22]' : 'bg-[#EA8A79]',
                 )}
               ></span>
             </span>
           </div>
           <div className='flex gap-20 bg-[#ECECEC] text-[#999] text-2xl pt-3 pb-3 pl-20 pr-[189px]'>
-            <span className={clsx(dayOfWeek === 'Понедельник' && 'text-[#DC3E22]')}>Пн</span>
-            <span className={clsx(dayOfWeek === 'Вторник' && 'text-[#DC3E22]')}>Вт</span>
-            <span className={clsx(dayOfWeek === 'Среда' && 'text-[#DC3E22]')}>Ср</span>
-            <span className={clsx(dayOfWeek === 'Четверг' && 'text-[#DC3E22]')}>Чт</span>
-            <span className={clsx(dayOfWeek === 'Пятница' && 'text-[#DC3E22]')}>Пт</span>
-            <span className={clsx(dayOfWeek === 'Суббота' && 'text-[#DC3E22]')}>Сб</span>
-            <span className={clsx(dayOfWeek === 'Воскресенье' && 'text-[#DC3E22]')}>Вс</span>
+            <span className={cn(dayOfWeek === 'Понедельник' && 'text-[#DC3E22]')}>Пн</span>
+            <span className={cn(dayOfWeek === 'Вторник' && 'text-[#DC3E22]')}>Вт</span>
+            <span className={cn(dayOfWeek === 'Среда' && 'text-[#DC3E22]')}>Ср</span>
+            <span className={cn(dayOfWeek === 'Четверг' && 'text-[#DC3E22]')}>Чт</span>
+            <span className={cn(dayOfWeek === 'Пятница' && 'text-[#DC3E22]')}>Пт</span>
+            <span className={cn(dayOfWeek === 'Суббота' && 'text-[#DC3E22]')}>Сб</span>
+            <span className={cn(dayOfWeek === 'Воскресенье' && 'text-[#DC3E22]')}>Вс</span>
           </div>
           <div className='absolute top-[68px] right-7 flex flex-col text-xs'>
             <span className='pb-[51px]'>
@@ -236,7 +202,6 @@ export default function StatisticsPage() {
             </span>
           </div>
         </div>
-        {/* <Chart statistic={statisticArray} /> */}
       </div>
       <div className='flex justify-between dark:text-[#215a80]'>
         <Widget title='Фокус' svg={<SvgFocus />} className='bg-[#FFDDA9]'>

@@ -1,11 +1,13 @@
 'use client';
 
 import { FC } from 'react';
+
 import { Modal } from './modal';
 import { SvgIncrease } from '../icons/increase';
 import { SvgDecrease } from '../icons/decrease';
 import { SvgEdit } from '../icons/edit';
 import { SvgDelete } from '../icons/delete';
+
 import { useLocalStorageState } from '@/hooks/use-storage';
 import { TasksArrayProps, useTasksStore } from '@/store/tasks-store';
 

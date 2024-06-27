@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Описание
 
-## Getting Started
+Проект состоит из двух страниц, реализующих функциональность трекера задач с таймером "Pomodoro".
+На первом экране реализована работа со списком задач и таймером.
+Второй экран позволяет просматривать статистику использования таймера за разные периоды времени.
 
-First, run the development server:
+Проект написан на Next.js v14 с использованием встроенных возможностей: 
+-роутинг, 
+-стили, 
+-ssr+hmr, 
+-turbopack.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Состояния компонентов хранится через Zustand store.
+Состояние приложения сохраняется при перезагрузке страницы в LocalStorage с использованием класса обертки StorageWrapper, который можно использовать как хук и сохранять данные по ключу. 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Добавлена возможность переключать между темной/светлой темой с помощью Tailwind.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Используемые библиотеки и технологии
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- `React` — JavaScript-библиотека для создания пользовательских интерфейсов,
+- `Next.js` — реактивный фреймворк для создания веб-приложений на основе React,
+- `Zustand` — библиотека для управления состоянием в React,
+- `Typescript` — для типизации в режиме разработки,
+- `Tailwind CSS` — css фреймворк,
+- `Sass` — препроцессор css,
+- `Clsx` — утилита для динамического создания классов css,
+- `Prettier` — для автоматического форматирования кода,
+- `ESLint` — для обнаружения и исправления ошибок.
 
-## Learn More
+# Запуск проекта
 
-To learn more about Next.js, take a look at the following resources:
+- `npm install` — установка зависимостей,
+- `npm run start` — сборка и запуск,
+- `npm run build` — сборка,
+- `npm run dev` — для запуска в режиме разработки,
+- `npm run lint` — для запуска проверки next lint,
+- `npm run format` — для запуска форматирования prettier.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Ссылки
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[Макет](https://www.figma.com/file/4gQfoY8SSFlhh8E8zWvkup/Pomodoro?type=design&node-id=0-1&mode=design&t=FouhRZujtloUqbTF-0)

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { FC } from 'react';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+
 import { SvgEqualizer } from './icons/equalizer';
 import { SvgTomato } from './icons/tomato';
 import { ThemeToggle } from './ThemeToggle';

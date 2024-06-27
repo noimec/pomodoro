@@ -2,9 +2,11 @@
 
 import { FC, useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { useOutsideClick } from '@/hooks/use-outside-click';
+
 import { Dropdown } from './ui/dropdown';
 import { SvgDots } from './icons/dots';
+
+import { useOutsideClick } from '@/hooks/use-outside-click';
 import { useLocalStorageState } from '@/hooks/use-storage';
 import { TasksArrayProps, useTasksStore } from '@/store/tasks-store';
 

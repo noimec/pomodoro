@@ -1,6 +1,8 @@
-import { useLocalStorageState } from '@/hooks/use-storage';
 import { useEffect, useState } from 'react';
+
 import { SvgDarkTheme } from './icons/dark-theme';
+
+import { useLocalStorageState } from '@/hooks/use-storage';
 
 export const ThemeToggle = () => {
   const [darkTheme, setDarkTheme] = useState(false);
