@@ -1,0 +1,13 @@
+services:
+  client:
+    build:
+      context: ./
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - "3000:3000"
+
+networks:
+  pomodoro:
+    name: pomodoro
+    driver: bridge
