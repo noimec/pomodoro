@@ -40,7 +40,7 @@ export default function StatisticsPage() {
       setStatisticArray(storageStaistics);
       setFilteredData(getWeeksData(STATISTICS_DATA, label));
     }
-  }, [label, setStatisticArray, storageStaistics]);
+  }, [label, setFilteredData, setStatisticArray, storageStaistics]);
 
   const lastStat =
     storageStaistics.length > 0 ? storageStaistics[storageStaistics.length - 1] : null;
@@ -75,7 +75,7 @@ export default function StatisticsPage() {
           35%
         </Widget>
         <Widget title='Время на паузе' svg={<SvgPause />} className='bg-[#DFDCFE]'>
-          {lastStat ? `${lastStat.pauseTime}м` : '0м'}
+          {lastStat ? `${lastStat.pauseTime} c` : '0 м'}
         </Widget>
 
         <Widget title='Остановки' svg={<SvgStop />} className='bg-[#C5F1FF]'>

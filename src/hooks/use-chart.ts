@@ -8,7 +8,8 @@ import {
     Title,
     Tooltip,
     Legend,
-    ChartData, ChartOptions
+    ChartData,
+    ChartOptions
 } from 'chart.js';
 
 import { STATISTICS_DATA } from "@/constants/constants";
@@ -25,8 +26,8 @@ export const useChart = () => {
             {
                 label: 'Фокус Время',
                 data: filteredData.map((data) => data.value),
-                borderColor: '#FFD200',
-                backgroundColor: 'rgba(255, 215, 0, 0.2)',
+                borderColor: '#B7280F',
+                backgroundColor: '#FFD200',
                 tension: 0.1,
             },
         ],
@@ -37,6 +38,9 @@ export const useChart = () => {
         plugins: {
             legend: {
                 position: 'top',
+                labels: {
+                    color: '#3498DB'
+                }
             },
             tooltip: {
                 mode: 'index',
@@ -49,13 +53,21 @@ export const useChart = () => {
                 title: {
                     display: true,
                     text: 'День недели',
+                    color: '#3498DB'
                 },
+                ticks: {
+                    color: '#3498DB'
+                }
             },
             y: {
                 type: 'linear',
                 title: {
                     display: true,
                     text: 'Время (минуты)',
+                    color: '#3498DB'
+                },
+                ticks: {
+                    color: '#3498DB'
                 },
                 beginAtZero: true,
             },
@@ -66,5 +78,5 @@ export const useChart = () => {
         chartData,
         chartOptions,
         setFilteredData
-    }
-}
+    };
+};

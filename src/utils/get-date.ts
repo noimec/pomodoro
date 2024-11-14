@@ -16,7 +16,6 @@ export const getDayOfWeek = (day?: string) => {
   } else {
     return daysOfWeek[today];
   }
-
 };
 
 const getWeekBoundaries = (date: Date) => {
@@ -25,9 +24,9 @@ const getWeekBoundaries = (date: Date) => {
   const startOfWeek = new Date(currentDate);
   const endOfWeek = new Date(currentDate);
 
-  startOfWeek.setDate(currentDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)); // Понедельник
+  startOfWeek.setDate(currentDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1)); 
   startOfWeek.setHours(0, 0, 0, 0);
-  endOfWeek.setDate(currentDate.getDate() + (7 - dayOfWeek)); // Воскресенье
+  endOfWeek.setDate(currentDate.getDate() + (7 - dayOfWeek));
   endOfWeek.setHours(23, 59, 59, 999);
 
   return { startOfWeek, endOfWeek };
