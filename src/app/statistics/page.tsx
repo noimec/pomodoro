@@ -2,17 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  ChartOptions,
-} from 'chart.js';
 
 import { Widget } from '@/components/Widget';
 import { SvgFocus } from '@/components/icons/focus';
@@ -27,10 +16,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { SvgArrow } from '@/components/icons/arrow';
-import { STATISTICS_DATA } from '@/constants/constants';
-import { getDayOfWeek, getWeeksData } from '@/utils/get-date';
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+import { CHART_FILTERS, STATISTICS_DATA } from '@/constants/constants';
+import { getWeeksData } from '@/utils/get-date';
+import { useChart } from '@/hooks/use-chart';
 
 export default function StatisticsPage() {
   const { statisticArray, setStatisticArray } = useTimerStore();
@@ -38,59 +26,28 @@ export default function StatisticsPage() {
     'statistics',
     [],
   );
+  const { chartData, chartOptions, setFilteredData } = useChart();
   const [label, setLabel] = useState('Эта неделя');
   const [open, setMenuOpen] = useState(false);
-  const [filteredData, setFilteredData] = useState(STATISTICS_DATA);
+  const [isClient, setIsClient] = useState(false);
+
   const onOpenChange = () => setMenuOpen(!open);
-  const dayOfWeek = getDayOfWeek();
 
   useEffect(() => {
-    if (storageStaistics.length !== 0) {
+    setIsClient(true);
+
+    if (!!storageStaistics) {
       setStatisticArray(storageStaistics);
       setFilteredData(getWeeksData(STATISTICS_DATA, label));
     }
-  }, [label, storageStaistics]);
+  }, [label, setStatisticArray, storageStaistics]);
 
-  const chartData = {
-    labels: filteredData.map((data) => getDayOfWeek(data.date)),
-    datasets: [
-      {
-        label: 'Фокус Время',
-        data: filteredData.map((data) => data.value),
-        borderColor: '#FFD200',
-        backgroundColor: 'rgba(255, 215, 0, 0.2)',
-        tension: 0.1,
-      },
-    ],
-  };
+  const lastStat =
+    storageStaistics.length > 0 ? storageStaistics[storageStaistics.length - 1] : null;
 
-  const chartOptions: ChartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      tooltip: {
-        mode: 'index',
-        intersect: false,
-      },
-    },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'День недели',
-        },
-      },
-      y: {
-        title: {
-          display: true,
-          text: 'Время (минуты)',
-        },
-        beginAtZero: true,
-      },
-    },
-  };
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <div className='px-[80px] pt-[88px]'>
@@ -102,30 +59,27 @@ export default function StatisticsPage() {
             <SvgArrow className='ml-2 h-3 w-3 transition' />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setLabel('Эта неделя')}>Эта неделя</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setLabel('Прошлая неделя')}>
-              Прошлая неделя
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setLabel('2 недели назад')}>
-              2 недели назад
-            </DropdownMenuItem>
+            {CHART_FILTERS.map((filter) => (
+              <DropdownMenuItem key={filter} onClick={() => setLabel(filter)}>
+                {filter}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      <div className='flex mb-6'>
-        <Line data={chartData} options={chartOptions} />
-      </div>
+      <Line className='mb-6' data={chartData} options={chartOptions} />
 
       <div className='flex justify-between dark:text-[#215a80]'>
         <Widget title='Фокус' svg={<SvgFocus />} className='bg-[#FFDDA9]'>
           35%
         </Widget>
         <Widget title='Время на паузе' svg={<SvgPause />} className='bg-[#DFDCFE]'>
-          {statisticArray.length !== 0 && storageStaistics[storageStaistics.length - 1].pauseTime}м
+          {lastStat ? `${lastStat.pauseTime}м` : '0м'}
         </Widget>
+
         <Widget title='Остановки' svg={<SvgStop />} className='bg-[#C5F1FF]'>
-          {statisticArray.length !== 0 && storageStaistics[storageStaistics.length - 1].stopCount}
+          {lastStat ? lastStat.stopCount : 0}
         </Widget>
       </div>
     </div>
