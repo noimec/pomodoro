@@ -1,4 +1,4 @@
-export const getDayOfWeek = () => {
+export const getDayOfWeek = (day?: string) => {
   const daysOfWeek = [
     'Воскресенье',
     'Понедельник',
@@ -10,7 +10,13 @@ export const getDayOfWeek = () => {
   ];
   const today = new Date().getDay();
 
-  return daysOfWeek[today];
+  if (day) {
+    const dayObj = new Date(day)
+    return daysOfWeek[dayObj.getDay()]
+  } else {
+    return daysOfWeek[today];
+  }
+
 };
 
 const getWeekBoundaries = (date: Date) => {
@@ -28,13 +34,13 @@ const getWeekBoundaries = (date: Date) => {
 };
 
 const filterDataByWeek = (data: any, startDate: any, endDate: any) => {
-  return data.filter((item:any) => {
+  return data.filter((item: any) => {
     const itemDate = new Date(item.date);
     return itemDate >= startDate && itemDate <= endDate;
   });
 };
 
-export const getWeeksData = (data:any, weekLabel:string) => {
+export const getWeeksData = (data: any, weekLabel: string) => {
   const currentDate = new Date();
   const { startOfWeek: startOfThisWeek, endOfWeek: endOfThisWeek } = getWeekBoundaries(currentDate);
 
