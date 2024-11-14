@@ -1,5 +1,11 @@
 export const TOTAL_TIME = 5;
 
+export const CHART_FILTERS = [
+  'Эта неделя',
+  'Прошлая неделя',
+  '2 недели назад'
+]
+
 export const STATISTICS_DATA = [
   { date: '2024-06-06T00:00:00.000Z', value: 10 },
   { date: '2024-06-07T00:00:00.000Z', value: 20 },
