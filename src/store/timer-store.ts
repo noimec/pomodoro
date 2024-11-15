@@ -1,5 +1,4 @@
-import { create } from 'zustand'
-;
+import { create } from 'zustand';
 import { TOTAL_TIME } from '@/constants/constants';
 
 export interface StatisticsProps {
