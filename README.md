@@ -36,20 +36,20 @@ $ cd pomodoro-app
 ## Установка зависимостей
 
 ```bash
-$ yarn install
+$ nmp install
 ```
 
 ## Запуск приложения
 
 ```bash
 # development
-$ yarn dev
+$ npm run dev
 ```
 
 ## Cборка
 
 ```bash
-$ yarn build
+$ npm run build
 ```
 
 ## Запуск c Docker
