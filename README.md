@@ -30,7 +30,7 @@ Pomodoro app - приложение для управления списком �
 
 ```bash
 $ git clone https://github.com/ingerstep/pomodoro-app
-$ cd pomodoro-app
+$ cd pomodoro-react
 ```
 
 ## Установка зависимостей
