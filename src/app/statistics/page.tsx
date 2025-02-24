@@ -1,53 +1,25 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
-import { Widget } from '@/components/Widget';
-import { SvgFocus } from '@/components/icons/focus';
-import { SvgPause } from '@/components/icons/pause';
-import { SvgStop } from '@/components/icons/stop';
-import { useLocalStorageState } from '@/hooks/use-storage';
-import { StatisticsProps, useTimerStore } from '@/store/timer-store';
+import { useChart } from '@/shared/lib/use-chart';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { SvgArrow } from '@/components/icons/arrow';
-import { CHART_FILTERS, STATISTICS_DATA } from '@/constants/constants';
-import { getWeeksData } from '@/utils/get-date';
-import { useChart } from '@/hooks/use-chart';
+} from '@/shared/ui/dropdown-menu';
+import { SvgPause, SvgFocus, SvgStop, SvgArrow } from '@/shared/ui/icons';
+import { Widget } from '@/widgets/chart';
+import { CHART_FILTERS } from '@/shared/config';
 
 export default function StatisticsPage() {
-  const { statisticArray, setStatisticArray } = useTimerStore();
-  const [storageStaistics, setStorageStaistics] = useLocalStorageState<Array<StatisticsProps>>(
-    'statistics',
-    [],
-  );
   const { chartData, chartOptions, setFilteredData } = useChart();
   const [label, setLabel] = useState('Эта неделя');
   const [open, setMenuOpen] = useState(false);
-  const [isClient, setIsClient] = useState(false);
 
   const onOpenChange = () => setMenuOpen(!open);
-
-  useEffect(() => {
-    setIsClient(true);
-
-    if (!!storageStaistics) {
-      setStatisticArray(storageStaistics);
-      setFilteredData(getWeeksData(STATISTICS_DATA, label));
-    }
-  }, [label, setFilteredData, setStatisticArray, storageStaistics]);
-
-  const lastStat =
-    storageStaistics.length > 0 ? storageStaistics[storageStaistics.length - 1] : null;
-
-  if (!isClient) {
-    return null;
-  }
 
   return (
     <div className='px-[80px] pt-[88px]'>
@@ -75,11 +47,11 @@ export default function StatisticsPage() {
           35%
         </Widget>
         <Widget title='Время на паузе' svg={<SvgPause />} className='bg-[#DFDCFE]'>
-          {lastStat ? `${lastStat.pauseTime} c` : '0 м'}
+          {'0 м'}
         </Widget>
 
         <Widget title='Остановки' svg={<SvgStop />} className='bg-[#C5F1FF]'>
-          {lastStat ? lastStat.stopCount : 0}
+          {0}
         </Widget>
       </div>
     </div>
