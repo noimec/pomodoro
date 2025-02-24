@@ -3,31 +3,18 @@
 import { FC, useEffect } from 'react';
 import clsx from 'clsx';
 
-import { Button } from './ui/button';
-import { SvgPlus } from './icons/plus';
 
-import { useCountdown } from '@/hooks/use-countdown';
-import { useLocalStorageState } from '@/hooks/use-storage';
-import { TOTAL_TIME } from '@/constants/constants';
-import { StatisticsProps, useTimerStore } from '@/store/timer-store';
-import { useTasksStore } from '@/store/tasks-store';
-import { formatTime } from '@/utils/format-time';
+import { SvgPlus } from '@/shared/ui/icons/plus';
+import { Button } from '@/shared/ui/button';
+import { tasksStore } from '@/entities/task/model/store';
+import { useCountdown } from '@/shared/hooks/use-countdown';
+import { timerStore } from '@/entities/timer/model/store';
 
-export const Dashboard: FC = () => {
-  const { timeRemaining, setTimeRemaining, isStarted, isRunning, isPaused } = useTimerStore();
+export const Timer: FC = () => {
+  const { timeRemaining, setTimeRemaining, isStarted, isRunning, isPaused } = timerStore();
   const { setTaskCountIsDone, setSuccessTaskCount, tasksArray, successTaskCount, taskCountIsDone } =
-    useTasksStore();
+    tasksStore();
   const { addOneMinute, start, pause, resume, stop, skip } = useCountdown();
-
-  const [lastSavedTime, setLastSavedTime] = useLocalStorageState<number>(
-    'lastSavedTime',
-    TOTAL_TIME,
-  );
-
-  const [storageStaistics, setStorageStaistics] = useLocalStorageState<Array<StatisticsProps>>(
-    'statistics',
-    [],
-  );
 
   useEffect(() => {
     const currentDay = new Date().getDay();
@@ -46,7 +33,7 @@ export const Dashboard: FC = () => {
   }, [storageStaistics]);
 
   return (
-    <div className='relative w-[120%] h-[510px] flex flex-col justify-start items-start bg-[#C4C4C4]'>
+    <div className='relative w-[60%] h-[510px] flex flex-col justify-start items-start bg-[#C4C4C4]'>
       <div
         className={clsx(
           'flex justify-between items-center py-5 px-10 w-full h-14 dark:bg-[#2C3E50]',

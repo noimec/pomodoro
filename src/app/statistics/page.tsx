@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
-import { Widget } from '@/components/Widget';
+import { Widget } from '@/widgets/chart/ui/Widget';
 import { SvgFocus } from '@/components/icons/focus';
 import { SvgPause } from '@/components/icons/pause';
 import { SvgStop } from '@/components/icons/stop';
@@ -18,7 +18,7 @@ import {
 import { SvgArrow } from '@/components/icons/arrow';
 import { CHART_FILTERS, STATISTICS_DATA } from '@/constants/constants';
 import { getWeeksData } from '@/utils/get-date';
-import { useChart } from '@/hooks/use-chart';
+import { useChart } from '@/shared/hooks/use-chart';
 
 export default function StatisticsPage() {
   const { statisticArray, setStatisticArray } = useTimerStore();

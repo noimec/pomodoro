@@ -1,24 +1,15 @@
 import { useEffect, useState } from 'react';
 
-import { SvgDarkTheme } from './icons/dark-theme';
-
-import { useLocalStorageState } from '@/hooks/use-storage';
+import { SvgDarkTheme } from '@/shared/ui/icons/dark-theme';
 
 export const ThemeToggle = () => {
   const [darkTheme, setDarkTheme] = useState(false);
-  const [storageTheme, setStorageTheme] = useLocalStorageState<string>('theme', 'white');
-
-  useEffect(() => {
-    storageTheme === 'dark' && setDarkTheme(true);
-  }, []);
 
   useEffect(() => {
     if (darkTheme) {
       document.documentElement.classList.add('dark');
-      setStorageTheme('dark');
     } else {
       document.documentElement.classList.remove('dark');
-      setStorageTheme('white');
     }
   }, [darkTheme]);
 
