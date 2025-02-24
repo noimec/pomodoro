@@ -3,12 +3,10 @@
 import { FC, useEffect, useState } from 'react';
 import clsx from 'clsx';
 
-import { Dropdown } from './ui/dropdown';
-import { SvgDots } from './icons/dots';
-
-import { useOutsideClick } from '@/hooks/use-outside-click';
-import { useLocalStorageState } from '@/hooks/use-storage';
-import { TasksArrayProps, useTasksStore } from '@/store/tasks-store';
+import { useOutsideClick } from '@/shared/hooks/use-outside-click';
+import { tasksStore } from '@/entities/task/model/store';
+import { SvgDots } from '@/shared/ui/icons/dots';
+import { Dropdown } from '@/shared/ui/dropdown';
 
 interface TaskProps {
   id: number;
@@ -16,20 +14,28 @@ interface TaskProps {
 }
 
 export const Task: FC<TaskProps> = ({ text, id }) => {
-  const { tasksArray, setTasksArray, fullTimeValue, setFullTimeValue, modalOpen } = useTasksStore();
+  const { tasksArray, setTasksArray, fullTimeValue, setFullTimeValue, modalOpen, setModalOpen } = tasksStore();
   const [isOpen, setIsOpen] = useState(false);
   const [taskText, setTaskText] = useState(text);
   const [disable, setDisable] = useState(true);
-
-  const [storageTasks, setStorageTasks] = useLocalStorageState<Array<TasksArrayProps>>(
-    'tasksArray',
-    [],
-  );
 
   const inputRef = useOutsideClick(() => setDisable(true));
   const onClose = () => setIsOpen(false);
 
   const onDisable = () => setDisable(false);
+
+  const removeItem = () => {
+    setFullTimeValue(fullTimeValue - tasksArray[id].pomodoros * 25);
+
+    const updateArray = tasksArray.filter((_, index) => index !== id);
+    setTasksArray(updateArray);
+    setModalOpen(false);
+  };
+
+  const editItem = () => {
+    onClose();
+    onDisable();
+  };
 
   const increaseCount = () => {
     const filteredArray = tasksArray.map((item, index) => {
@@ -43,7 +49,6 @@ export const Task: FC<TaskProps> = ({ text, id }) => {
       return item;
     });
     setTasksArray(filteredArray);
-    setStorageTasks(filteredArray);
   };
 
   const decreaseCount = () => {
@@ -58,7 +63,6 @@ export const Task: FC<TaskProps> = ({ text, id }) => {
       return item;
     });
     setTasksArray(filteredArray);
-    setStorageTasks(filteredArray);
   };
 
   const dropdownRef = () => {
@@ -73,7 +77,6 @@ export const Task: FC<TaskProps> = ({ text, id }) => {
     );
 
     setTasksArray(filteredArray);
-    setStorageTasks(filteredArray);
   }, [taskText]);
 
   return (
@@ -101,9 +104,10 @@ export const Task: FC<TaskProps> = ({ text, id }) => {
           <Dropdown
             decreaseCount={decreaseCount}
             increaseCount={increaseCount}
-            onClose={onClose}
-            onDisable={onDisable}
-            id={id}
+            modalOpen={modalOpen}
+            editItem={editItem}
+            removeItem={removeItem}
+            onModalOpen={()=>setModalOpen(true)}
           />
         </div>
       )}

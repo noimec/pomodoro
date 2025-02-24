@@ -3,17 +3,13 @@
 import { ChangeEvent, FC, useEffect, useState } from 'react';
 
 import { Task } from './Task';
-import { Button } from './ui/button';
-
-import { useLocalStorageState } from '@/hooks/use-storage';
-import { TasksArrayProps, useTasksStore } from '@/store/tasks-store';
+import { tasksStore } from '@/entities/task/model/store';
+import { TasksArrayProps } from '@/entities/task/types';
+import { Button } from '@/shared/ui/button';
 
 export const Form: FC = () => {
-  const { fullTimeValue, setFullTimeValue, tasksArray, setTasksArray } = useTasksStore();
-  const [storageTasks, setStorageTasks] = useLocalStorageState<Array<TasksArrayProps>>(
-    'tasksArray',
-    [],
-  );
+  const { fullTimeValue, setFullTimeValue, tasksArray, setTasksArray } = tasksStore();
+
   const [value, setValue] = useState<string>('');
   const hours = Math.floor(fullTimeValue / 60);
   const remainderMinutes = fullTimeValue % 60;
@@ -22,21 +18,12 @@ export const Form: FC = () => {
     setValue(e.target.value);
   };
 
-  useEffect(() => {
-    setTasksArray(storageTasks);
-    if (fullTimeValue === 0) {
-      const totalTime = storageTasks.reduce((acc, task) => acc + task.pomodoros * 25, 0);
-      setFullTimeValue(totalTime);
-    }
-  }, []);
-
   const handleClick = () => {
     if (value) {
       const newTask: TasksArrayProps = { value, pomodoros: 1 };
       setValue('');
       setFullTimeValue(fullTimeValue + 25);
       setTasksArray([...tasksArray, newTask]);
-      setStorageTasks(tasksArray);
     }
   };
 

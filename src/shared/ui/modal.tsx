@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom';
 import { SvgExit } from '../icons/exit';
 import { Button } from './button';
 
-import { useOutsideClick } from '@/hooks/use-outside-click';
+import { useOutsideClick } from '@/shared/hooks/use-outside-click';
 import { TOTAL_TIME } from '@/constants/constants';
 import { useLocalStorageState } from '@/hooks/use-storage';
 import { useTasksStore } from '@/store/tasks-store';

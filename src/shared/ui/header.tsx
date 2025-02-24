@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { FC } from 'react';
+import type { FC } from 'react';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 
-import { SvgEqualizer } from './icons/equalizer';
-import { SvgTomato } from './icons/tomato';
-import { ThemeToggle } from './ThemeToggle';
+import { ThemeToggle } from './theme-toggle';
+
+import { SvgTomato } from '@/shared/ui/icons/tomato';
+import { SvgEqualizer } from '@/shared/ui/icons/equalizer';
 
 export const Header: FC = () => {
   const pathname = usePathname();
@@ -22,7 +23,7 @@ export const Header: FC = () => {
         )}
       >
         <SvgTomato />
-        <div className='font-light ml-2'>pomodoro_box</div>
+        <div className='font-light ml-2'>pomodoro</div>
       </Link>
       <ThemeToggle />
       <Link
