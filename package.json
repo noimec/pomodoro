@@ -34,6 +34,7 @@
     "postcss": "^8.4.33",
     "prettier": "3.2.4",
     "sass": "^1.69.5",
+    "steiger": "^0.5.5",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
