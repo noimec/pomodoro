@@ -3,33 +3,16 @@
 import { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
-<<<<<<< HEAD
 import { useChart } from '@/shared/lib/use-chart';
-=======
-import { Widget } from '@/widgets/chart/ui/Widget';
-import { SvgFocus } from '@/components/icons/focus';
-import { SvgPause } from '@/components/icons/pause';
-import { SvgStop } from '@/components/icons/stop';
-import { useLocalStorageState } from '@/hooks/use-storage';
-import { StatisticsProps, useTimerStore } from '@/store/timer-store';
->>>>>>> origin/main
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-<<<<<<< HEAD
 } from '@/shared/ui/dropdown-menu';
 import { SvgPause, SvgFocus, SvgStop, SvgArrow } from '@/shared/ui/icons';
 import { Widget } from '@/widgets/chart';
 import { CHART_FILTERS } from '@/shared/config';
-=======
-} from '@/components/ui/dropdown-menu';
-import { SvgArrow } from '@/components/icons/arrow';
-import { CHART_FILTERS, STATISTICS_DATA } from '@/constants/constants';
-import { getWeeksData } from '@/utils/get-date';
-import { useChart } from '@/shared/hooks/use-chart';
->>>>>>> origin/main
 
 export default function StatisticsPage() {
   const { chartData, chartOptions, setFilteredData } = useChart();

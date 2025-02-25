@@ -3,21 +3,12 @@
 import { ChangeEvent, FC, useState } from 'react';
 
 import { Task } from './Task';
-<<<<<<<< HEAD:src/features/task-managment/ui/Form.tsx
 import { Button } from '@/shared/ui/button';
 import { tasksStore } from '@/entities/task';
 
 export const Form: FC = () => {
   const { tasksArray, actions, fullTimeValue } = tasksStore();
   const [inputValue, setInputValue] = useState('');
-========
-import { tasksStore } from '@/entities/task/model/store';
-import { TasksArrayProps } from '@/entities/task/types';
-import { Button } from '@/shared/ui/button';
-
-export const Form: FC = () => {
-  const { fullTimeValue, setFullTimeValue, tasksArray, setTasksArray } = tasksStore();
->>>>>>>> origin/main:src/entities/task/ui/Form.tsx
 
   const [value, setValue] = useState<string>('');
   const hours = Math.floor(fullTimeValue / 60);
@@ -27,7 +18,6 @@ export const Form: FC = () => {
     setValue(e.target.value);
   };
 
-<<<<<<<< HEAD:src/features/task-managment/ui/Form.tsx
   const handleSubmit = () => {
     actions.addTask({
       id: Date.now(),
@@ -35,15 +25,6 @@ export const Form: FC = () => {
       pomodoros: 1,
     });
     setInputValue('');
-========
-  const handleClick = () => {
-    if (value) {
-      const newTask: TasksArrayProps = { value, pomodoros: 1 };
-      setValue('');
-      setFullTimeValue(fullTimeValue + 25);
-      setTasksArray([...tasksArray, newTask]);
-    }
->>>>>>>> origin/main:src/entities/task/ui/Form.tsx
   };
 
   return (
