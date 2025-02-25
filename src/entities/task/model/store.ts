@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+<<<<<<< HEAD
 import { TasksArrayProps, TasksStoreState } from '@/entities/task/model/types';
 
 export const tasksStore = create<TasksStoreState>((set) => ({
@@ -33,4 +34,19 @@ export const tasksStore = create<TasksStoreState>((set) => ({
       fullTimeValue: state.fullTimeValue - state.tasksArray[id].pomodoros * 25
     }))
   }
+=======
+import { TasksStoreState } from '@/entities/task/types';
+
+export const tasksStore = create<TasksStoreState>((set) => ({
+  tasksArray: [],
+  setTasksArray: (tasksArray) => set({ tasksArray }),
+  fullTimeValue: 0,
+  setFullTimeValue: (fullTimeValue) => set({ fullTimeValue }),
+  modalOpen: false,
+  setModalOpen: (modalOpen) => set({ modalOpen }),
+  successTaskCount: 0,
+  setSuccessTaskCount: (successTaskCount) => set({ successTaskCount }),
+  taskCountIsDone: 1,
+  setTaskCountIsDone: (taskCountIsDone) => set({ taskCountIsDone }),
+>>>>>>> origin/main
 }));
