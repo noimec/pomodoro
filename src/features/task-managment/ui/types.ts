@@ -1,4 +1,4 @@
 export interface TaskProps {
-    id: number;
-    text: string;
+  id: number;
+  text: string;
 }

@@ -17,20 +17,23 @@ export const tasksStore = create<TasksStoreState>((set) => ({
   updateState: (newState) => set((state) => ({ ...state, ...newState })),
 
   actions: {
-    addTask: (task: TasksArrayProps) => set((state) => ({
-      tasksArray: [...state.tasksArray, task],
-      fullTimeValue: state.fullTimeValue + 25
-    })),
+    addTask: (task: TasksArrayProps) =>
+      set((state) => ({
+        tasksArray: [...state.tasksArray, task],
+        fullTimeValue: state.fullTimeValue + 25,
+      })),
 
-    updateTask: (id: number, updates: Partial<TasksArrayProps>) => set((state) => ({
-      tasksArray: state.tasksArray.map((task, index) =>
-        index === id ? { ...task, ...updates } : task
-      )
-    })),
+    updateTask: (id: number, updates: Partial<TasksArrayProps>) =>
+      set((state) => ({
+        tasksArray: state.tasksArray.map((task, index) =>
+          index === id ? { ...task, ...updates } : task,
+        ),
+      })),
 
-    removeTask: (id: number) => set((state) => ({
-      tasksArray: state.tasksArray.filter((_, index) => index !== id),
-      fullTimeValue: state.fullTimeValue - state.tasksArray[id].pomodoros * 25
-    }))
-  }
+    removeTask: (id: number) =>
+      set((state) => ({
+        tasksArray: state.tasksArray.filter((_, index) => index !== id),
+        fullTimeValue: state.fullTimeValue - state.tasksArray[id].pomodoros * 25,
+      })),
+  },
 }));
