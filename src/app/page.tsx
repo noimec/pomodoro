@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 import { Form } from '@/features/task-managment';
 import { Timer } from '@/features/timer';
-=======
-import { Form } from '@/entities/task/ui/Form';
->>>>>>> origin/main
 import { Methodology } from '@/shared/ui/metodology';
 
 export default function HomePage() {
@@ -13,11 +9,7 @@ export default function HomePage() {
         <Methodology />
         <Form />
       </div>
-<<<<<<< HEAD
       <Timer />
-=======
-      {/*<Dashboard />*/}
->>>>>>> origin/main
     </div>
   );
 }

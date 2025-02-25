@@ -5,16 +5,8 @@ import { FC } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from '../../../shared/ui/button';
 
-<<<<<<<< HEAD:src/features/task-managment/ui/TaskModal.tsx
 import { useOutsideClick } from '@/shared/lib/use-outside-click';
 import { SvgExit } from '@/shared/ui/icons';
-========
-import { useOutsideClick } from '@/shared/hooks/use-outside-click';
-import { TOTAL_TIME } from '@/constants/constants';
-import { useLocalStorageState } from '@/hooks/use-storage';
-import { useTasksStore } from '@/store/tasks-store';
-import { useTimerStore } from '@/store/timer-store';
->>>>>>>> origin/main:src/shared/ui/modal.tsx
 
 interface TaskModalProps {
   removeItem: () => void;

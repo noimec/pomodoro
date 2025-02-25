@@ -1,11 +1,6 @@
 import { create } from 'zustand';
-<<<<<<< HEAD
 import { TimerStoreState } from './types';
 import { TOTAL_TIME } from '../lib/constants';
-=======
-import { TOTAL_TIME } from '@/entities/timer/config/constants';
-import { TimerStoreState } from '@/entities/timer/types';
->>>>>>> origin/main
 
 export const timerStore = create<TimerStoreState>((set, get) => ({
   pauseTime: 0,

@@ -3,47 +3,18 @@
 import { FC, useEffect } from 'react';
 import clsx from 'clsx';
 
-<<<<<<<< HEAD:src/features/timer/ui/Timer.tsx
 import { Button } from '@/shared/ui/button';
 import { timerStore } from '@/entities/timer';
 import { useCountdown } from '../lib/use-countdown';
 import { tasksStore } from '@/entities/task';
 import { SvgPlus } from '@/shared/ui/icons';
 
-========
-
-import { SvgPlus } from '@/shared/ui/icons/plus';
-import { Button } from '@/shared/ui/button';
-import { tasksStore } from '@/entities/task/model/store';
-import { useCountdown } from '@/shared/hooks/use-countdown';
-import { timerStore } from '@/entities/timer/model/store';
-
->>>>>>>> origin/main:src/entities/timer/ui/Timer.tsx
 export const Timer: FC = () => {
   const { timeRemaining, setTimeRemaining, isStarted, isRunning, isPaused } = timerStore();
   const { setTaskCountIsDone, setSuccessTaskCount, tasksArray, successTaskCount, taskCountIsDone } =
     tasksStore();
   const { addOneMinute, start, pause, resume, stop, skip } = useCountdown();
 
-<<<<<<<< HEAD:src/features/timer/ui/Timer.tsx
-========
-  useEffect(() => {
-    const currentDay = new Date().getDay();
-
-    setTimeRemaining(lastSavedTime);
-
-    const lastStatistics = storageStaistics[storageStaistics.length - 1];
-
-    if (lastStatistics && lastStatistics.day === currentDay) {
-      setTaskCountIsDone(lastStatistics.taskCountIsDone);
-      setSuccessTaskCount(lastStatistics.successTaskCount);
-    } else {
-      setTaskCountIsDone(0);
-      setSuccessTaskCount(0);
-    }
-  }, [storageStaistics]);
-
->>>>>>>> origin/main:src/entities/timer/ui/Timer.tsx
   return (
     <div className='relative w-[60%] h-[510px] flex flex-col justify-start items-start bg-[#C4C4C4]'>
       <div
