@@ -1,2 +1,2 @@
-export * from './ui/Timer'
-export * from './lib/use-countdown'
+export * from './ui/Timer';
+export * from './lib/use-countdown';

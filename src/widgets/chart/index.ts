@@ -1,1 +1,1 @@
-export * from './ui/Widget'
+export * from './ui/Widget';
