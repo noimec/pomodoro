@@ -1,3 +1,3 @@
 export const useStore = () => {
-    return ''
-}
+  return '';
+};
