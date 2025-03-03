@@ -1,3 +1,1 @@
-export const formatTime = () => {
-
-}
+export const formatTime = () => {};
