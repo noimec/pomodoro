@@ -7,8 +7,8 @@ import { useOutsideClick } from '@/shared/lib/use-outside-click';
 import { SvgDots } from '@/shared/ui/icons';
 import { TaskProps } from './types';
 import { useTaskActions } from '../lib/use-task-actions';
-import { TaskDropdown } from './TaskDropdown';
-
+import { TaskDropdown } from './task-dropdown';
+//TODO: refactoring task
 export const Task: FC<TaskProps> = ({ text, id }) => {
   const { task, actions, modalOpen, disable } = useTaskActions(id, text);
   const [isOpen, setIsOpen] = useState(false);
