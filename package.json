@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write \"**/*.{js,jsx,json,ts,tsx,css,scss,html}\""
+    "format": "prettier --write \"**/*.{js,jsx,json,ts,tsx,css,scss,html}\"",
+    "prepare": "git config core.hooksPath .git-hooks || echo 'Not in a git repo'"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.1",

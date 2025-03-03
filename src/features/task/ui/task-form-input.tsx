@@ -1,19 +1,15 @@
 'use client';
 
-import { ChangeEvent, FC, useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 
-import { Task } from './Task';
-import { Button } from '@/shared/ui/button';
 import { tasksStore } from '@/entities/task';
+import { Button } from '@/shared/ui/button';
 
-export const Form: FC = () => {
-  const { tasksArray, actions, fullTimeValue } = tasksStore();
+export const TaskFormInput = () => {
+  const { actions } = tasksStore();
   const [inputValue, setInputValue] = useState('');
 
   const [value, setValue] = useState<string>('');
-  const hours = Math.floor(fullTimeValue / 60);
-  const remainderMinutes = fullTimeValue % 60;
-
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
   };
@@ -26,9 +22,8 @@ export const Form: FC = () => {
     });
     setInputValue('');
   };
-
   return (
-    <div className='flex flex-col w-[370px]'>
+    <>
       <input
         className='py-5 px-4 mb-6 text-[#999] bg-[#F4F4F4] text-base font-light focus-visible:outline-none dark:text-[#ECF0F1] dark:bg-[#2C3E50]'
         value={value}
@@ -39,17 +34,6 @@ export const Form: FC = () => {
       <Button size='default' variant='green' onClick={handleSubmit} className='mb-[26px]'>
         Добавить
       </Button>
-      {tasksArray.map((task, index) => (
-        <Task key={index} text={task.value} id={index} />
-      ))}
-      <div className='mb-6'>
-        {tasksArray.length !== 0 && (
-          <span className='text-[#999] text-base font-light dark:text-[#ECF0F1]'>
-            {hours !== 0 && `${hours} час `}
-            {`${remainderMinutes} минут`}
-          </span>
-        )}
-      </div>
-    </div>
+    </>
   );
 };

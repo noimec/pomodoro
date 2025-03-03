@@ -1,10 +1,12 @@
-import { tasksStore } from '@/entities/task';
 import { useState } from 'react';
 
+import { getTasksArray, tasksStore } from '@/entities/task';
+
 export const useTaskActions = (id: number, initialText: string) => {
-  const { tasksArray, actions, modalOpen, setModalOpen } = tasksStore();
+  const { actions, modalOpen, setModalOpen } = tasksStore();
   const [isEditing, setIsEditing] = useState(false);
   const [disable, setDisable] = useState(false);
+  const tasksArray = getTasksArray();
 
   const handleTextChange = (value: string) => {
     actions.updateTask(id, { value });
