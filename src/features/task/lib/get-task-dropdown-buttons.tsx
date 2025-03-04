@@ -1,7 +1,7 @@
 import { SvgDelete, SvgEdit, SvgDecrease, SvgIncrease } from '@/shared/ui/icons';
 import { ButtonsConfig, TasksButtonsProps } from './types';
 
-export const getTasksDropdownButtons = ({
+export const getTaskDropdownButtons = ({
   onIncrease,
   onDecrease,
   onEdit,

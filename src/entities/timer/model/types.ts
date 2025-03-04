@@ -19,6 +19,11 @@ export interface TimerStoreState {
   statisticArray: StatisticsProps[];
 
   setState: (state: Partial<TimerStoreState>) => void;
+  addOneMinute: (state: Partial<TimerStoreState>) => void;
+  setIsStarted: (isStarted: boolean) => void,
+  setIsPaused: (isPaused: boolean) => void,
+  setIsRunning: (isRunning: boolean) => void,
+  setTimeRemaining: (timeRemaining: number) => void,
   startTimer: () => void;
   pauseTimer: () => void;
   resetTimer: () => void;

@@ -1,4 +1,4 @@
-'use client';
+"use client"
 
 import { tasksStore } from '../model/store';
 

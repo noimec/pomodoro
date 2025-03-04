@@ -1,6 +1,6 @@
 import { getTasksArray, tasksStore } from '@/entities/task';
 
-export const useTimeDisplay = () => {
+export const getTimeDisplay = () => {
   const { fullTimeValue } = tasksStore();
   const tasksArray = getTasksArray();
 
