@@ -5,9 +5,13 @@ export interface TaskProps {
 
 export interface TaskDropdownProps {
   modalOpen: boolean;
-  onRemove: () => void;
+  taskModal: JSX.Element;
   onEdit: () => void;
   onIncrease: () => void;
   onDecrease: () => void;
   onModalOpen: () => void;
+}
+
+export interface TaskModalProps {
+  removeItem: () => void;
 }

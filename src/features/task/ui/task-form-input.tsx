@@ -1,27 +1,11 @@
 'use client';
 
-import { useState, ChangeEvent } from 'react';
-
-import { tasksStore } from '@/entities/task';
 import { Button } from '@/shared/ui/button';
+import { useFormData } from '../lib/use-form-data';
 
 export const TaskFormInput = () => {
-  const { actions } = tasksStore();
-  const [inputValue, setInputValue] = useState('');
+  const { handleSubmit, onChange, value } = useFormData();
 
-  const [value, setValue] = useState<string>('');
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-  };
-
-  const handleSubmit = () => {
-    actions.addTask({
-      id: Date.now(),
-      value: inputValue,
-      pomodoros: 1,
-    });
-    setInputValue('');
-  };
   return (
     <>
       <input

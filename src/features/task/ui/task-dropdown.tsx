@@ -1,20 +1,17 @@
-'use client';
-
 import { FC } from 'react';
 
-import { TaskModal } from './task-modal';
-import { getTasksDropdownButtons } from '../lib/get-tasks-dropdown-buttons';
+import { getTaskDropdownButtons } from '../lib/get-task-dropdown-buttons';
 import { TaskDropdownProps } from './types';
 
 export const TaskDropdown: FC<TaskDropdownProps> = ({
   onDecrease,
   onEdit,
   onIncrease,
-  onRemove,
-  modalOpen,
   onModalOpen,
+  taskModal,
+  modalOpen,
 }) => {
-  const buttons = getTasksDropdownButtons({
+  const buttons = getTaskDropdownButtons({
     onIncrease,
     onDecrease,
     onEdit,
@@ -34,7 +31,7 @@ export const TaskDropdown: FC<TaskDropdownProps> = ({
           <span className='ml-2'>{button.text}</span>
         </button>
       ))}
-      {modalOpen && <TaskModal removeItem={onRemove} />}
+      {modalOpen && taskModal}
     </div>
   );
 };

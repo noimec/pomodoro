@@ -1,7 +1,7 @@
-import { useTimeDisplay } from '../lib/use-time-display';
+import { getTimeDisplay } from '../lib/get-time-display';
 
 export const TaskTimeDisplay = () => {
-  const { hours, hoursString, minutesString, tasksArray } = useTimeDisplay();
+  const { hours, hoursString, minutesString, tasksArray } = getTimeDisplay();
 
   return (
     <div className='mb-6'>

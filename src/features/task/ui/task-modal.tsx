@@ -3,28 +3,15 @@
 import { FC } from 'react';
 
 import { createPortal } from 'react-dom';
-import { Button } from '../../../shared/ui/button';
 
-import { useOutsideClick } from '@/shared/lib/use-outside-click';
 import { SvgExit } from '@/shared/ui/icons';
-
-interface TaskModalProps {
-  removeItem: () => void;
-}
+import { Button } from '@/shared/ui/button';
+import { TaskModalProps } from './types';
+import { useTaskModalActions } from '../lib/use-task-modal-actions';
 
 export const TaskModal: FC<TaskModalProps> = ({ removeItem }) => {
-  const { setModalOpen } = useTasksStore();
-  const { setIsStarted, setIsPaused, setIsRunning, setTimeRemaining } = useTimerStore();
+  const { ref, setModalOpen, handleClick } = useTaskModalActions({ removeItem });
   const node = document.querySelector('#modal');
-  const ref = useOutsideClick(() => setModalOpen(false));
-
-  const handleClick = () => {
-    removeItem();
-    setIsStarted(false);
-    setIsPaused(false);
-    setIsRunning(false);
-    setTimeRemaining(TOTAL_TIME);
-  };
   if (!node) return;
 
   return createPortal(

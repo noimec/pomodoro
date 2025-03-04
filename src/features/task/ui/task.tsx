@@ -1,24 +1,17 @@
-'use client';
-
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import clsx from 'clsx';
 
-import { useOutsideClick } from '@/shared/lib/use-outside-click';
 import { SvgDots } from '@/shared/ui/icons';
 import { TaskProps } from './types';
 import { useTaskActions } from '../lib/use-task-actions';
 import { TaskDropdown } from './task-dropdown';
-//TODO: refactoring task
+import { TaskModal } from './task-modal';
+
 export const Task: FC<TaskProps> = ({ text, id }) => {
-  const { task, actions, modalOpen, disable } = useTaskActions(id, text);
-  const [isOpen, setIsOpen] = useState(false);
-  const inputRef = useOutsideClick(actions.handleDisable);
-
-  const dropdownRef = () => {
-    !modalOpen && setIsOpen(false);
-  };
-
-  const ref = useOutsideClick(dropdownRef);
+  const { task, actions, modalOpen, disable, ref, isOpen, setIsOpen, inputRef } = useTaskActions(
+    id,
+    text,
+  );
 
   return (
     <div className='relative flex items-center py-4 px-0 -mt-[1px] border-t border-b border-solid border-gray-300'>
@@ -47,8 +40,8 @@ export const Task: FC<TaskProps> = ({ text, id }) => {
             onIncrease={actions.handleIncrease}
             modalOpen={modalOpen}
             onEdit={actions.handleEdit}
-            onRemove={actions.handleRemove}
             onModalOpen={actions.handleModalOpen}
+            taskModal={<TaskModal removeItem={actions.handleRemove} />}
           />
         </div>
       )}

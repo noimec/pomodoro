@@ -10,3 +10,7 @@ export interface TasksButtonsProps {
   onEdit: () => void;
   onModalOpen: () => void;
 }
+
+export interface TaskModalActionsProps {
+  removeItem: () => void
+}

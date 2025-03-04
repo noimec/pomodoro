@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { TimerStoreState } from './types';
-import { TOTAL_TIME } from '../lib/constants';
+import { TOTAL_TIME } from '@/shared/config';
 
 export const timerStore = create<TimerStoreState>((set, get) => ({
   pauseTime: 0,
@@ -11,6 +11,13 @@ export const timerStore = create<TimerStoreState>((set, get) => ({
   isRunning: false,
   timeRemaining: TOTAL_TIME,
   statisticArray: [],
+
+  setIsStarted: (isStarted) => set({ isStarted }),
+  setIsPaused: (isPaused) => set({ isPaused }),
+  setIsRunning: (isRunning) => set({ isRunning }),
+  setTimeRemaining: (timeRemaining) => set({ timeRemaining }),
+
+  addOneMinute: () => set((state) => ({ timeRemaining: state.timeRemaining + 60 })),
 
   setState: (state) => set(state),
 
