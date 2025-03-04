@@ -1,10 +1,18 @@
-"use client"
+'use client';
 
 import { timerStore } from '@/entities/timer';
 import { useEffect } from 'react';
 
 export const useCountdown = () => {
-  const { isRunning, timeRemaining, startTimer, pauseTimer, resetTimer, setIsRunning, setTimeRemaining } = timerStore();
+  const {
+    isRunning,
+    timeRemaining,
+    startTimer,
+    pauseTimer,
+    resetTimer,
+    setIsRunning,
+    setTimeRemaining,
+  } = timerStore();
 
   useEffect(() => {
     if (!isRunning) return;
