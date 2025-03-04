@@ -12,5 +12,5 @@ export interface TasksButtonsProps {
 }
 
 export interface TaskModalActionsProps {
-  removeItem: () => void
+  removeItem: () => void;
 }

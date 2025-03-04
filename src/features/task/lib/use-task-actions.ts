@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import { useState } from 'react';
 
@@ -16,7 +16,7 @@ export const useTaskActions = (id: number, initialText: string) => {
     !modalOpen && setIsOpen(false);
   };
 
-  const handleDisable = () => setDisable(true)
+  const handleDisable = () => setDisable(true);
 
   const ref = useOutsideClick(dropdownRef);
   const inputRef = useOutsideClick(handleDisable);
