@@ -15,3 +15,8 @@ export interface TaskDropdownProps {
 export interface TaskModalProps {
   removeItem: () => void;
 }
+
+export interface TaskInputProps {
+  value: string;
+  taskId: number;
+}
