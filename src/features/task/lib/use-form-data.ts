@@ -6,12 +6,12 @@ export const useFormData = () => {
   const { actions } = tasksStore();
   const [inputValue, setInputValue] = useState('');
 
-  const [value, setValue] = useState<string>('');
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
+    setInputValue(e.target.value);
   };
 
   const handleSubmit = () => {
+    console.log(inputValue);
     actions.addTask({
       id: Date.now(),
       value: inputValue,
@@ -21,7 +21,7 @@ export const useFormData = () => {
   };
 
   return {
-    value,
+    inputValue,
     onChange,
     handleSubmit,
   };
