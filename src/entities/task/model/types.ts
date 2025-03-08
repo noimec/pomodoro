@@ -19,6 +19,8 @@ export interface TasksStoreState {
 
   updateState: (newState: Partial<TasksStoreState>) => void;
 
+  getTaskById: (id: number) => TasksArrayProps | undefined;
+
   actions: {
     addTask: (task: TasksArrayProps) => void;
     updateTask: (id: number, updates: Partial<TasksArrayProps>) => void;
