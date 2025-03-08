@@ -1,3 +1,5 @@
+import { RefObject } from 'react';
+
 export interface TaskProps {
   id: number;
   text: string;
@@ -18,5 +20,9 @@ export interface TaskModalProps {
 
 export interface TaskInputProps {
   value: string;
-  taskId: number;
+  inputRef: RefObject<HTMLDivElement>;
+  isEditing: boolean;
+  disable: boolean;
+  onSave: () => void;
+  onChange: (value: string) => void;
 }

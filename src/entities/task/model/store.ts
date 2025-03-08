@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { TasksArrayProps, TasksStoreState } from '@/entities/task/model/types';
 
-export const tasksStore = create<TasksStoreState>((set) => ({
+export const tasksStore = create<TasksStoreState>((set, get) => ({
   tasksArray: [],
   fullTimeValue: 0,
   modalOpen: false,
@@ -15,6 +15,8 @@ export const tasksStore = create<TasksStoreState>((set) => ({
   setTaskCountIsDone: (taskCountIsDone) => set({ taskCountIsDone }),
 
   updateState: (newState) => set((state) => ({ ...state, ...newState })),
+
+  getTaskById: (id: number) => get().tasksArray.find((task) => task.id === id),
 
   actions: {
     addTask: (task: TasksArrayProps) =>

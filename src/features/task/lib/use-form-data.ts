@@ -1,3 +1,5 @@
+'use client';
+
 import { ChangeEvent, useState } from 'react';
 
 import { tasksStore } from '@/entities/task';
@@ -11,12 +13,14 @@ export const useFormData = () => {
   };
 
   const handleSubmit = () => {
-    console.log(inputValue);
+    if (!inputValue) return;
+
     actions.addTask({
       id: Date.now(),
       value: inputValue,
       pomodoros: 1,
     });
+
     setInputValue('');
   };
 
