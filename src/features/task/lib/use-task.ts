@@ -9,12 +9,12 @@ export const useTask = (id: number, initialText: string) => {
   const { actions, modalOpen, setModalOpen, fullTimeValue, setFullTimeValue, getTaskById } =
     tasksStore();
 
+  const task = getTaskById(id);
+
   const [isOpen, setIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [disable, setDisable] = useState(true);
   const [editValue, setEditValue] = useState(initialText);
-
-  const task = getTaskById(id);
 
   if (!task) {
     throw new Error(`Task with id ${id} not found`);

@@ -2,10 +2,11 @@
 
 import { FC } from 'react';
 
+import { getTasksArray } from '@/entities/task';
+
 import { Task } from './task';
 import { TaskFormInput } from './task-form-input';
 import { TaskTimeDisplay } from './task-time-display';
-import { getTasksArray } from '@/entities/task';
 
 export const TaskForm: FC = () => {
   const tasksArray = getTasksArray();
