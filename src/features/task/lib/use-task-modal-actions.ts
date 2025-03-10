@@ -1,8 +1,9 @@
 import { tasksStore } from '@/entities/task';
 import { timerStore } from '@/entities/timer';
 import { useOutsideClick } from '@/shared/lib';
-import { TaskModalActionsProps } from './types';
 import { TOTAL_TIME } from '@/shared/config';
+
+import { TaskModalActionsProps } from './types';
 
 export const useTaskModalActions = ({ removeItem }: TaskModalActionsProps) => {
   const { setIsStarted, setIsPaused, setIsRunning, setTimeRemaining } = timerStore();

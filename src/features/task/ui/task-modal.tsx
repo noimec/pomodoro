@@ -1,17 +1,18 @@
 'use client';
 
 import { FC } from 'react';
-
 import { createPortal } from 'react-dom';
 
 import { SvgExit } from '@/shared/ui/icons';
 import { Button } from '@/shared/ui/button';
+
 import { TaskModalProps } from './types';
 import { useTaskModalActions } from '../lib/use-task-modal-actions';
 
 export const TaskModal: FC<TaskModalProps> = ({ removeItem }) => {
   const { ref, setModalOpen, handleClick } = useTaskModalActions({ removeItem });
   const node = document.querySelector('#modal');
+
   if (!node) return;
 
   return createPortal(

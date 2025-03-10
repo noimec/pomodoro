@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import clsx from 'clsx';
+
 import { TaskInputProps } from './types';
 
 export const TaskInput: FC<TaskInputProps> = ({

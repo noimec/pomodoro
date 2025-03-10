@@ -15,14 +15,14 @@ export const Task: FC<TaskProps> = ({ text, id }) => {
     task,
     modalOpen,
     isOpen,
-    setIsOpen,
     isEditing,
     disable,
     editValue,
-    setEditValue,
     inputRef,
     dropdownRef,
     actions,
+    setIsOpen,
+    setEditValue,
   } = useTask(id, text);
 
   return (
