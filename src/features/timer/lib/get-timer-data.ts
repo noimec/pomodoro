@@ -12,7 +12,7 @@ export const getTimerData = () => {
     isStarted,
     successTaskCount,
     isPaused,
-    addOneMinute,
     timeRemaining,
+    addOneMinute,
   };
 };
