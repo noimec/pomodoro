@@ -26,7 +26,6 @@ export const Button: FC<ButtonProps> = ({
       sm: 'w-[145px]',
       md: 'w-[190px]',
     }[size],
-    disabled && 'opacity-50 cursor-not-allowed',
   );
 
   return (
