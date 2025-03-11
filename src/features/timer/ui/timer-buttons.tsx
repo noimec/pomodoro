@@ -1,26 +1,30 @@
 import { Button } from '@/shared/ui/button';
 import { useCountdown } from '../lib/use-countdown';
 import { getTimerData } from '../lib/get-timer-data';
-import { getTasksArray } from '@/entities/task';
 
 export const TimerButtons = () => {
   const { pause, skip, start, resume } = useCountdown();
-  const { isRunning, isPaused } = getTimerData();
-  const taskIsEmpty = getTasksArray();
+  const { isRunning, isPaused, tasksIsEmpty } = getTimerData();
+
   return (
     <div>
       {isRunning ? (
         <>
           <Button
-            disabled={!taskIsEmpty}
+            disabled={tasksIsEmpty}
             size='sm'
-            variant='green'
+            variant={tasksIsEmpty ? 'disabled' : 'green'}
             onClick={pause}
             className='mr-6'
           >
             Пауза
           </Button>
-          <Button disabled={!taskIsEmpty} onClick={skip} size='md' variant='red'>
+          <Button
+            disabled={tasksIsEmpty}
+            onClick={skip}
+            size='md'
+            variant={tasksIsEmpty ? 'disabled' : 'red'}
+          >
             Пропустить
           </Button>
         </>
@@ -28,9 +32,9 @@ export const TimerButtons = () => {
         <>
           {!isPaused ? (
             <Button
-              disabled={!taskIsEmpty}
+              disabled={tasksIsEmpty}
               size='sm'
-              variant='green'
+              variant={tasksIsEmpty ? 'disabled' : 'green'}
               onClick={start}
               className='mr-6'
             >
@@ -38,16 +42,21 @@ export const TimerButtons = () => {
             </Button>
           ) : (
             <Button
-              disabled={!taskIsEmpty}
+              disabled={tasksIsEmpty}
               size='md'
-              variant='green'
+              variant={tasksIsEmpty ? 'disabled' : 'green'}
               onClick={resume}
               className='mr-6'
             >
               Продолжить
             </Button>
           )}
-          <Button disabled={!taskIsEmpty} size='sm' variant='red' onClick={skip}>
+          <Button
+            disabled={tasksIsEmpty}
+            size='sm'
+            variant={tasksIsEmpty ? 'disabled' : 'red'}
+            onClick={skip}
+          >
             Стоп
           </Button>
         </>
