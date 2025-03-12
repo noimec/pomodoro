@@ -11,6 +11,7 @@ export const timerStore = create<TimerStoreState>((set, get) => ({
   isStarted: false,
   isPaused: false,
   isRunning: false,
+  isActivePause: false,
   timeRemaining: TOTAL_TIME,
   statisticArray: [],
 
@@ -19,6 +20,7 @@ export const timerStore = create<TimerStoreState>((set, get) => ({
   setIsStarted: (isStarted) => set({ isStarted }),
   setIsPaused: (isPaused) => set({ isPaused }),
   setIsRunning: (isRunning) => set({ isRunning }),
+  setIsActivePause: (isActivePause) => set({ isActivePause }),
   setTimeRemaining: (timeRemaining) => set({ timeRemaining }),
 
   addOneMinute: () => set((state) => ({ timeRemaining: state.timeRemaining + 60 })),
@@ -28,11 +30,18 @@ export const timerStore = create<TimerStoreState>((set, get) => ({
         state.timeRemaining > TOTAL_TIME ? state.timeRemaining - 60 : state.timeRemaining,
     })),
 
-  startTimer: () => set({ isStarted: true, isRunning: true }),
+  startTimer: () => {
+    const { isActivePause } = get();
+    if (!isActivePause) {
+      set({ isStarted: true, isRunning: true });
+    }
+  },
 
   pauseTimer: () => {
-    const { isPaused } = get();
-    set({ isPaused: !isPaused, isRunning: isPaused });
+    const { isPaused, isActivePause } = get();
+    if (!isActivePause) {
+      set({ isPaused: !isPaused, isRunning: isPaused });
+    }
   },
 
   resetTimer: () =>
@@ -41,8 +50,8 @@ export const timerStore = create<TimerStoreState>((set, get) => ({
       isStarted: false,
       isPaused: false,
       isRunning: false,
+      isActivePause: false,
     }),
-
   incrementStopCount: () => set((state) => ({ stopCount: state.stopCount + 1 })),
 
   addStatistic: (stat) =>

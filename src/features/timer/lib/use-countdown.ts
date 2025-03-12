@@ -4,18 +4,21 @@ import { useEffect } from 'react';
 
 import { timerStore } from '@/entities/timer';
 import { tasksStore } from '@/entities/task';
+import { MAX_PAUSE, MIN_PAUSE } from '@/shared/config';
 
 export const useCountdown = () => {
   const {
     isRunning,
     timeRemaining,
+    isActivePause,
     startTimer,
     pauseTimer,
     resetTimer,
     setIsRunning,
     setTimeRemaining,
+    setIsActivePause,
   } = timerStore();
-  const { finishTask, setFullTimeValue, skipPomodoro, fullTimeValue } = tasksStore();
+  const { finishTask, setFullTimeValue, skipPomodoro, tasksDone, fullTimeValue } = tasksStore();
 
   useEffect(() => {
     if (!isRunning) return;
@@ -24,14 +27,23 @@ export const useCountdown = () => {
       if (timeRemaining > 0) {
         setTimeRemaining(timeRemaining - 1);
       } else {
-        finishTask();
-        resetTimer();
-        setFullTimeValue(fullTimeValue - 25);
+        if (!isActivePause) {
+          finishTask();
+          setFullTimeValue(fullTimeValue - 25);
+          setIsRunning(false);
+
+          setIsActivePause(true);
+          const pauseDuration = tasksDone % 4 === 0 ? MIN_PAUSE : MAX_PAUSE;
+          setTimeRemaining(pauseDuration);
+          setIsRunning(true);
+        } else {
+          resetTimer();
+        }
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isRunning, timeRemaining]);
+  }, [isRunning, timeRemaining, tasksDone]);
 
   const pause = () => {
     pauseTimer();
@@ -39,8 +51,10 @@ export const useCountdown = () => {
 
   const skip = () => {
     resetTimer();
-    skipPomodoro();
-    setFullTimeValue(fullTimeValue - 25);
+    if (!isActivePause) {
+      skipPomodoro();
+      setFullTimeValue(fullTimeValue - 25);
+    }
   };
 
   const start = () => {
@@ -51,5 +65,5 @@ export const useCountdown = () => {
     setIsRunning(true);
   };
 
-  return { pause, skip, start, resume };
+  return { pause, skip, start, resume, isActivePause };
 };

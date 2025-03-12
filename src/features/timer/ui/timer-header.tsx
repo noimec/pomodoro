@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { getTimerData } from '../lib/get-timer-data';
 
 export const TimerHeader = () => {
-  const { isRunning, isStarted, tasksDone, tasksArray } = getTimerData();
+  const { isRunning, isStarted, tasksDone, tasksArray, isActivePause } = getTimerData();
 
   return (
     <div
@@ -16,7 +16,9 @@ export const TimerHeader = () => {
           : 'bg-[#C4C4C4]',
       )}
     >
-      <div className='text-white text-base font-bold'>{tasksArray[0] && tasksArray[0].value}</div>
+      <div className='text-white text-base font-bold'>
+        {isActivePause ? 'Перерыв' : tasksArray[0] && tasksArray[0].value}
+      </div>
 
       <div className='text-white text-base font-normal'>Выполнено помидор: {tasksDone}</div>
     </div>
