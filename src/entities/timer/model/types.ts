@@ -14,6 +14,7 @@ export interface TimerStoreState {
   workingTime: number;
   isStarted: boolean;
   isPaused: boolean;
+  isActivePause: boolean;
   isRunning: boolean;
   timeRemaining: number;
   statisticArray: StatisticsProps[];
@@ -23,6 +24,7 @@ export interface TimerStoreState {
   subOneMinute: (timeRemaining: number) => void;
   setIsStarted: (isStarted: boolean) => void;
   setIsPaused: (isPaused: boolean) => void;
+  setIsActivePause: (isActivePause: boolean) => void;
   setIsRunning: (isRunning: boolean) => void;
   setTimeRemaining: (timeRemaining: number) => void;
   startTimer: () => void;

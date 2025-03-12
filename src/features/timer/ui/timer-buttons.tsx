@@ -1,9 +1,10 @@
 import { Button } from '@/shared/ui/button';
+
 import { useCountdown } from '../lib/use-countdown';
 import { getTimerData } from '../lib/get-timer-data';
 
 export const TimerButtons = () => {
-  const { pause, skip, start, resume } = useCountdown();
+  const { pause, skip, start, resume, isActivePause } = useCountdown();
   const { isRunning, isPaused, tasksIsEmpty } = getTimerData();
 
   return (
@@ -11,7 +12,7 @@ export const TimerButtons = () => {
       {isRunning ? (
         <>
           <Button
-            disabled={tasksIsEmpty}
+            disabled={tasksIsEmpty || isActivePause}
             size='sm'
             variant={tasksIsEmpty ? 'disabled' : 'green'}
             onClick={pause}
@@ -32,7 +33,7 @@ export const TimerButtons = () => {
         <>
           {!isPaused ? (
             <Button
-              disabled={tasksIsEmpty}
+              disabled={tasksIsEmpty || isActivePause}
               size='sm'
               variant={tasksIsEmpty ? 'disabled' : 'green'}
               onClick={start}
@@ -42,7 +43,7 @@ export const TimerButtons = () => {
             </Button>
           ) : (
             <Button
-              disabled={tasksIsEmpty}
+              disabled={tasksIsEmpty || isActivePause}
               size='md'
               variant={tasksIsEmpty ? 'disabled' : 'green'}
               onClick={resume}
@@ -52,7 +53,7 @@ export const TimerButtons = () => {
             </Button>
           )}
           <Button
-            disabled={tasksIsEmpty}
+            disabled={tasksIsEmpty || isActivePause}
             size='sm'
             variant={tasksIsEmpty ? 'disabled' : 'red'}
             onClick={skip}
