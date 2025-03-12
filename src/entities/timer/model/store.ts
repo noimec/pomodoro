@@ -18,6 +18,11 @@ export const timerStore = create<TimerStoreState>((set, get) => ({
   setTimeRemaining: (timeRemaining) => set({ timeRemaining }),
 
   addOneMinute: () => set((state) => ({ timeRemaining: state.timeRemaining + 60 })),
+  subOneMinute: () =>
+    set((state) => ({
+      timeRemaining:
+        state.timeRemaining > TOTAL_TIME ? state.timeRemaining - 60 : state.timeRemaining,
+    })),
   setState: (state) => set(state),
 
   startTimer: () => set({ isStarted: true, isRunning: true }),

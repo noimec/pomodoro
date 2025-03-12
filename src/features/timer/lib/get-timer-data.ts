@@ -2,7 +2,8 @@ import { getTasksArray, tasksStore } from '@/entities/task';
 import { timerStore } from '@/entities/timer';
 
 export const getTimerData = () => {
-  const { isRunning, isStarted, isPaused, timeRemaining, addOneMinute } = timerStore();
+  const { isRunning, isStarted, isPaused, timeRemaining, addOneMinute, subOneMinute } =
+    timerStore();
   const { successTaskCount } = tasksStore();
 
   const tasksArray = getTasksArray();
@@ -17,5 +18,6 @@ export const getTimerData = () => {
     timeRemaining,
     tasksIsEmpty,
     addOneMinute,
+    subOneMinute,
   };
 };
