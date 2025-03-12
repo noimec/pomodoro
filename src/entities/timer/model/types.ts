@@ -20,6 +20,7 @@ export interface TimerStoreState {
 
   setState: (state: Partial<TimerStoreState>) => void;
   addOneMinute: (timeRemaining: number) => void;
+  subOneMinute: (timeRemaining: number) => void;
   setIsStarted: (isStarted: boolean) => void;
   setIsPaused: (isPaused: boolean) => void;
   setIsRunning: (isRunning: boolean) => void;

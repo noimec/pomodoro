@@ -12,3 +12,4 @@ export * from './increase';
 export * from './pause';
 export * from './plus';
 export * from './stop';
+export * from './minus';
