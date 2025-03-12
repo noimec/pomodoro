@@ -1,5 +1,6 @@
+import { ReactNode } from 'react';
 export interface ButtonsConfig {
-  icon: JSX.Element;
+  icon: ReactNode;
   text: string;
   onClick: () => void;
 }

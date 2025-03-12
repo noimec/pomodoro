@@ -1,4 +1,4 @@
-import { RefObject } from 'react';
+import { RefObject, ReactNode } from 'react';
 
 export interface TaskProps {
   id: string;
@@ -7,7 +7,7 @@ export interface TaskProps {
 
 export interface TaskDropdownProps {
   modalOpen: boolean;
-  taskModal: JSX.Element;
+  taskModal: ReactNode;
   onEdit: () => void;
   onIncrease: () => void;
   onDecrease: () => void;
@@ -20,7 +20,7 @@ export interface TaskModalProps {
 
 export interface TaskInputProps {
   value: string;
-  inputRef: RefObject<HTMLDivElement>;
+  inputRef: any;
   isEditing: boolean;
   disable: boolean;
   onSave: () => void;
