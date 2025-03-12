@@ -15,12 +15,12 @@
     "incremental": true,
     "plugins": [
       {
-        "name": "next",
-      },
+        "name": "next"
+      }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-    },
+      "@/*": ["./src/*"]
+    }
   },
   "include": [
     "next-env.d.ts",
@@ -28,7 +28,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/app/api/tasks/route.ts",
-    "src/hooks/use-now.js",
+    "src/hooks/use-now.js"
   ],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules"]
 }

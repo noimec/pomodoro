@@ -1,18 +1,19 @@
 import clsx from 'clsx';
 import React, { FC } from 'react';
-import { MouseEventHandler, ReactNode } from 'react';
 
-interface ButtonProps {
-  onClick?: MouseEventHandler<HTMLButtonElement>;
-  children: ReactNode;
-  className?: string;
-  variant: string;
-  size: string;
-}
+import { ButtonProps } from './types';
 
-export const Button: FC<ButtonProps> = ({ onClick, children, className, variant, size }) => {
+export const Button: FC<ButtonProps> = ({
+  children,
+  onClick,
+  className,
+  disabled,
+  variant = 'green',
+  size = 'default',
+  ...attributes
+}) => {
   const buttonClassName = clsx(
-    'transition-colors h-[55px] text-base font-medium',
+    'transition-colors h-[55px] text-base font-medium cursor-pointer',
     className,
     {
       green:
@@ -28,7 +29,7 @@ export const Button: FC<ButtonProps> = ({ onClick, children, className, variant,
   );
 
   return (
-    <button className={buttonClassName} onClick={onClick}>
+    <button className={buttonClassName} onClick={onClick} disabled={disabled} {...attributes}>
       {children}
     </button>
   );
