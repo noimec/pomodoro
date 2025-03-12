@@ -13,10 +13,10 @@ export const timerStore = create<TimerStoreState>((set, get) => ({
   isRunning: false,
   isActivePause: false,
   timeRemaining: TOTAL_TIME,
+  startTime: null,
   statisticArray: [],
 
   setState: (state) => set(state),
-
   setIsStarted: (isStarted) => set({ isStarted }),
   setIsPaused: (isPaused) => set({ isPaused }),
   setIsRunning: (isRunning) => set({ isRunning }),
@@ -33,25 +33,53 @@ export const timerStore = create<TimerStoreState>((set, get) => ({
   startTimer: () => {
     const { isActivePause } = get();
     if (!isActivePause) {
-      set({ isStarted: true, isRunning: true });
+      set({
+        isStarted: true,
+        isRunning: true,
+        startTime: Date.now(),
+      });
     }
   },
 
   pauseTimer: () => {
-    const { isPaused, isActivePause } = get();
-    if (!isActivePause) {
-      set({ isPaused: !isPaused, isRunning: isPaused });
+    const { isPaused, isActivePause, workingTime, startTime } = get();
+    if (!isActivePause && startTime) {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      set({
+        isPaused: !isPaused,
+        isRunning: isPaused,
+        workingTime: workingTime + elapsed,
+        startTime: null,
+      });
     }
   },
 
-  resetTimer: () =>
+  resetTimer: () => {
+    const { isActivePause, workingTime, pauseTime, startTime } = get();
+    let updatedWorkingTime = workingTime;
+    let updatedPauseTime = pauseTime;
+
+    if (startTime) {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      if (isActivePause) {
+        updatedPauseTime += elapsed;
+      } else {
+        updatedWorkingTime += elapsed;
+      }
+    }
+
     set({
       timeRemaining: TOTAL_TIME,
       isStarted: false,
       isPaused: false,
       isRunning: false,
       isActivePause: false,
-    }),
+      workingTime: updatedWorkingTime,
+      pauseTime: updatedPauseTime,
+      startTime: null,
+    });
+  },
+
   incrementStopCount: () => set((state) => ({ stopCount: state.stopCount + 1 })),
 
   addStatistic: (stat) =>

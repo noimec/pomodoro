@@ -11,7 +11,7 @@ export const TimerDisplay = () => {
   return (
     <div className='relative'>
       <button
-        onClick={() => subOneMinute(timeRemaining)}
+        onClick={() => subOneMinute()}
         disabled={isRunning}
         className='absolute top-1/2 -translate-y-1/2 -left-20'
       >
@@ -24,7 +24,7 @@ export const TimerDisplay = () => {
       </button>
       <div className='font-extralight text-[160px] leading-normal'>{formatTime(timeRemaining)}</div>
       <button
-        onClick={() => addOneMinute(timeRemaining)}
+        onClick={() => addOneMinute()}
         disabled={isRunning}
         className='absolute top-1/2 -translate-y-1/2 -right-20'
       >

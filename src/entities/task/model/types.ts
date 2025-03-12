@@ -8,7 +8,7 @@ export interface TasksStoreState {
   tasksArray: TasksArrayProps[];
   fullTimeValue: number;
   modalOpen: boolean;
-  tasksDone: number;
+  pomodorosDone: number;
 
   setTasksArray: (tasksArray: TasksArrayProps[]) => void;
   setFullTimeValue: (fullTimeValue: number) => void;
