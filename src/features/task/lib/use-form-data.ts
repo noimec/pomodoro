@@ -15,12 +15,13 @@ export const useFormData = () => {
   const handleSubmit = () => {
     if (!inputValue) return;
 
-    actions.addTask({
-      id: Date.now(),
+    const newTask = {
+      id: crypto.randomUUID(),
       value: inputValue,
       pomodoros: 1,
-    });
+    };
 
+    actions.addTask(newTask);
     setInputValue('');
   };
 

@@ -1,5 +1,7 @@
 import { create } from 'zustand';
+
 import { TimerStoreState } from './types';
+
 import { TOTAL_TIME } from '@/shared/config';
 
 export const timerStore = create<TimerStoreState>((set, get) => ({
@@ -12,6 +14,8 @@ export const timerStore = create<TimerStoreState>((set, get) => ({
   timeRemaining: TOTAL_TIME,
   statisticArray: [],
 
+  setState: (state) => set(state),
+
   setIsStarted: (isStarted) => set({ isStarted }),
   setIsPaused: (isPaused) => set({ isPaused }),
   setIsRunning: (isRunning) => set({ isRunning }),
@@ -23,7 +27,6 @@ export const timerStore = create<TimerStoreState>((set, get) => ({
       timeRemaining:
         state.timeRemaining > TOTAL_TIME ? state.timeRemaining - 60 : state.timeRemaining,
     })),
-  setState: (state) => set(state),
 
   startTimer: () => set({ isStarted: true, isRunning: true }),
 

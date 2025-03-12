@@ -1,1 +1,1 @@
-export const TOTAL_TIME = 1_500;
+export const TOTAL_TIME = 5;

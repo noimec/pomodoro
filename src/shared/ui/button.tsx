@@ -13,7 +13,7 @@ export const Button: FC<ButtonProps> = ({
   ...attributes
 }) => {
   const buttonClassName = clsx(
-    'transition-colors h-[55px] text-base font-medium',
+    'transition-colors h-[55px] text-base font-medium cursor-pointer',
     className,
     {
       green:

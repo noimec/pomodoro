@@ -2,14 +2,13 @@
 
 import clsx from 'clsx';
 
-import { getTasksArray, getTasksDone } from '@/entities/task';
+import { getTasksArray } from '@/entities/task';
 
 import { TimerHeader } from './timer-header';
 import { TimerButtons } from './timer-buttons';
 import { TimerDisplay } from './timer-display';
 
 export const Timer = () => {
-  const taskCountIsDone = getTasksDone();
   const tasksArray = getTasksArray();
   return (
     <div className='relative w-[60%] h-[510px] flex flex-col justify-start items-start bg-[#C4C4C4]'>
@@ -18,7 +17,7 @@ export const Timer = () => {
         <TimerDisplay />
         {tasksArray.length !== 0 && (
           <span className='mb-8 text-[#999] text-base font-normal'>
-            {clsx('Задача ', taskCountIsDone, '- ')}
+            {clsx('Задача ', '- ')}
             <span className='text-base font-normal'>{tasksArray[0].value}</span>
           </span>
         )}
