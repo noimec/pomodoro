@@ -11,7 +11,7 @@ export const getTimerData = () => {
     addOneMinute,
     subOneMinute,
   } = timerStore();
-  const { tasksDone } = tasksStore();
+  const { pomodorosDone } = tasksStore();
 
   const tasksArray = getTasksArray();
   const tasksIsEmpty = tasksArray.length === 0;
@@ -20,7 +20,7 @@ export const getTimerData = () => {
     tasksArray,
     isRunning,
     isStarted,
-    tasksDone,
+    pomodorosDone,
     isPaused,
     timeRemaining,
     tasksIsEmpty,

@@ -6,7 +6,7 @@ export const tasksStore = create<TasksStoreState>((set, get) => ({
   tasksArray: [],
   fullTimeValue: 0,
   modalOpen: false,
-  tasksDone: 0,
+  pomodorosDone: 0,
 
   setFullTimeValue: (fullTimeValue) => set({ fullTimeValue }),
   setModalOpen: (modalOpen) => set({ modalOpen }),
@@ -31,7 +31,7 @@ export const tasksStore = create<TasksStoreState>((set, get) => ({
 
       return {
         tasksArray: filteredTasksArray,
-        tasksDone: state.tasksDone + 1,
+        pomodorosDone: state.pomodorosDone + 1,
       };
     }),
   skipPomodoro: () =>
