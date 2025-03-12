@@ -1,7 +1,9 @@
 'use client';
 
-import { timerStore } from '@/entities/timer';
 import { useEffect } from 'react';
+
+import { timerStore } from '@/entities/timer';
+import { tasksStore } from '@/entities/task';
 
 export const useCountdown = () => {
   const {
@@ -13,6 +15,7 @@ export const useCountdown = () => {
     setIsRunning,
     setTimeRemaining,
   } = timerStore();
+  const { finishTask, setFullTimeValue, skipPomodoro, fullTimeValue } = tasksStore();
 
   useEffect(() => {
     if (!isRunning) return;
@@ -21,7 +24,9 @@ export const useCountdown = () => {
       if (timeRemaining > 0) {
         setTimeRemaining(timeRemaining - 1);
       } else {
-        setIsRunning(false);
+        finishTask();
+        resetTimer();
+        setFullTimeValue(fullTimeValue - 25);
       }
     }, 1000);
 
@@ -34,6 +39,8 @@ export const useCountdown = () => {
 
   const skip = () => {
     resetTimer();
+    skipPomodoro();
+    setFullTimeValue(fullTimeValue - 25);
   };
 
   const start = () => {

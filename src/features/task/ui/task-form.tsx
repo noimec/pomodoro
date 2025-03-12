@@ -14,7 +14,7 @@ export const TaskForm: FC = () => {
   return (
     <div className='flex flex-col w-[370px]'>
       <TaskFormInput />
-      {tasksArray.map((task, index) => (
+      {tasksArray.map((task) => (
         <Task key={task.id} text={task.value} id={task.id} />
       ))}
       <TaskTimeDisplay />

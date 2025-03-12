@@ -1,5 +1,5 @@
 export interface TasksArrayProps {
-  id: number;
+  id: string;
   value: string;
   pomodoros: number;
 }
@@ -8,22 +8,21 @@ export interface TasksStoreState {
   tasksArray: TasksArrayProps[];
   fullTimeValue: number;
   modalOpen: boolean;
-  successTaskCount: number;
-  taskCountIsDone: number;
+  tasksDone: number;
 
   setTasksArray: (tasksArray: TasksArrayProps[]) => void;
   setFullTimeValue: (fullTimeValue: number) => void;
   setModalOpen: (modalOpen: boolean) => void;
-  setSuccessTaskCount: (successTaskCount: number) => void;
-  setTaskCountIsDone: (taskCountIsDone: number) => void;
+  finishTask: () => void;
+  skipPomodoro: () => void;
 
   updateState: (newState: Partial<TasksStoreState>) => void;
 
-  getTaskById: (id: number) => TasksArrayProps | undefined;
+  getTaskById: (id: string) => TasksArrayProps | undefined;
 
   actions: {
     addTask: (task: TasksArrayProps) => void;
-    updateTask: (id: number, updates: Partial<TasksArrayProps>) => void;
-    removeTask: (id: number) => void;
+    updateTask: (id: string, updates: Partial<TasksArrayProps>) => void;
+    removeTask: (id: string) => void;
   };
 }
