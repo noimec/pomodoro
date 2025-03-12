@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { tasksStore } from '@/entities/task';
 import { useOutsideClick } from '@/shared/lib';
 
-export const useTask = (id: number, initialText: string) => {
+export const useTask = (id: string, initialText: string) => {
   const { actions, modalOpen, setModalOpen, fullTimeValue, setFullTimeValue, getTaskById } =
     tasksStore();
 

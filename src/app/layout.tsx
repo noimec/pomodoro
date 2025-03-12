@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { Roboto } from 'next/font/google';
 import clsx from 'clsx';
 
-import './globals.scss';
+import './globals.css';
 import { Header } from '@/shared/ui/header';
 
 const roboto = Roboto({

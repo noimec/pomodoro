@@ -1,7 +1,7 @@
 import { RefObject } from 'react';
 
 export interface TaskProps {
-  id: number;
+  id: string;
   text: string;
 }
 

@@ -1,22 +1,56 @@
 import { create } from 'zustand';
+
 import { TasksArrayProps, TasksStoreState } from '@/entities/task/model/types';
 
 export const tasksStore = create<TasksStoreState>((set, get) => ({
   tasksArray: [],
   fullTimeValue: 0,
   modalOpen: false,
-  successTaskCount: 0,
-  taskCountIsDone: 1,
+  pomodorosDone: 0,
 
   setFullTimeValue: (fullTimeValue) => set({ fullTimeValue }),
   setModalOpen: (modalOpen) => set({ modalOpen }),
-  setSuccessTaskCount: (successTaskCount) => set({ successTaskCount }),
   setTasksArray: (tasksArray) => set({ tasksArray }),
-  setTaskCountIsDone: (taskCountIsDone) => set({ taskCountIsDone }),
 
   updateState: (newState) => set((state) => ({ ...state, ...newState })),
 
-  getTaskById: (id: number) => get().tasksArray.find((task) => task.id === id),
+  getTaskById: (id: string) => get().tasksArray.find((task) => task.id === id),
+
+  finishTask: () =>
+    set((state) => {
+      const updatedTasksArray = [...state.tasksArray];
+
+      if (updatedTasksArray[0] && updatedTasksArray[0].pomodoros > 0) {
+        updatedTasksArray[0] = {
+          ...updatedTasksArray[0],
+          pomodoros: updatedTasksArray[0].pomodoros - 1,
+        };
+      }
+
+      const filteredTasksArray = updatedTasksArray.filter((task) => task.pomodoros > 0);
+
+      return {
+        tasksArray: filteredTasksArray,
+        pomodorosDone: state.pomodorosDone + 1,
+      };
+    }),
+  skipPomodoro: () =>
+    set((state) => {
+      const updatedTasksArray = [...state.tasksArray];
+
+      if (updatedTasksArray[0] && updatedTasksArray[0].pomodoros > 0) {
+        updatedTasksArray[0] = {
+          ...updatedTasksArray[0],
+          pomodoros: updatedTasksArray[0].pomodoros - 1,
+        };
+      }
+
+      const filteredTasksArray = updatedTasksArray.filter((task) => task.pomodoros > 0);
+
+      return {
+        tasksArray: filteredTasksArray,
+      };
+    }),
 
   actions: {
     addTask: (task: TasksArrayProps) =>
@@ -25,14 +59,14 @@ export const tasksStore = create<TasksStoreState>((set, get) => ({
         fullTimeValue: state.fullTimeValue + 25,
       })),
 
-    updateTask: (id: number, updates: Partial<TasksArrayProps>) =>
+    updateTask: (id: string, updates: Partial<TasksArrayProps>) =>
       set((state) => ({
         tasksArray: state.tasksArray.map((task) =>
           task.id === id ? { ...task, ...updates } : task,
         ),
       })),
 
-    removeTask: (id: number) =>
+    removeTask: (id: string) =>
       set((state) => {
         const taskToRemove = state.tasksArray.find((task) => task.id === id);
 

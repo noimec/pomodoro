@@ -1,7 +1,6 @@
-import type { FC } from 'react';
 import { POMODORO_INSTRUCTIONS } from '@/shared/config/constants/pomodoro-instructions';
 
-export const Methodology: FC = () => {
+export const Methodology = () => {
   return (
     <div className='mb-6'>
       <div className='mb-1 text-2xl font-bold dark:text-[#ECF0F1]'>Инструкция:</div>

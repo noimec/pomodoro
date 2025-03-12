@@ -1,34 +1,63 @@
 import { Button } from '@/shared/ui/button';
+
 import { useCountdown } from '../lib/use-countdown';
 import { getTimerData } from '../lib/get-timer-data';
 
 export const TimerButtons = () => {
-  const { pause, skip, start, resume } = useCountdown();
-  const { isRunning, isPaused } = getTimerData();
+  const { pause, skip, start, resume, isActivePause } = useCountdown();
+  const { isRunning, isPaused, tasksIsEmpty } = getTimerData();
 
   return (
     <div>
       {isRunning ? (
         <>
-          <Button size='sm' variant='green' onClick={pause} className='mr-6'>
+          <Button
+            disabled={tasksIsEmpty || isActivePause}
+            size='sm'
+            variant={tasksIsEmpty ? 'disabled' : 'green'}
+            onClick={pause}
+            className='mr-6'
+          >
             Пауза
           </Button>
-          <Button onClick={skip} size='md' variant='red'>
+          <Button
+            disabled={tasksIsEmpty}
+            onClick={skip}
+            size='md'
+            variant={tasksIsEmpty ? 'disabled' : 'red'}
+          >
             Пропустить
           </Button>
         </>
       ) : (
         <>
           {!isPaused ? (
-            <Button size='sm' variant='green' onClick={start} className='mr-6'>
+            <Button
+              disabled={tasksIsEmpty || isActivePause}
+              size='sm'
+              variant={tasksIsEmpty ? 'disabled' : 'green'}
+              onClick={start}
+              className='mr-6'
+            >
               Старт
             </Button>
           ) : (
-            <Button size='md' variant='green' onClick={resume} className='mr-6'>
+            <Button
+              disabled={tasksIsEmpty || isActivePause}
+              size='md'
+              variant={tasksIsEmpty ? 'disabled' : 'green'}
+              onClick={resume}
+              className='mr-6'
+            >
               Продолжить
             </Button>
           )}
-          <Button size='sm' variant='red' onClick={skip}>
+          <Button
+            disabled={tasksIsEmpty || isActivePause}
+            size='sm'
+            variant={tasksIsEmpty ? 'disabled' : 'red'}
+            onClick={skip}
+          >
             Стоп
           </Button>
         </>
