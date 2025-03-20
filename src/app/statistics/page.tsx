@@ -57,3 +57,7 @@
 //     </div>
 //   );
 // }
+
+export default function StatisticsPage() {
+  return <div>Hellp</div>;
+}

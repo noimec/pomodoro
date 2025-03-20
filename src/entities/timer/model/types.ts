@@ -3,6 +3,7 @@ interface StatisticsProps {
   pauseTime: number;
   pomodorosDone: number;
   timestamp: string;
+  skipCount: number;
 }
 
 export interface TimerStoreState {
@@ -14,6 +15,7 @@ export interface TimerStoreState {
   isRunning: boolean;
   isActivePause: boolean;
   timeRemaining: number;
+  skipCount: number;
 
   statisticArray: Array<StatisticsProps>;
 
@@ -26,6 +28,7 @@ export interface TimerStoreState {
   setIsActivePause: (isActivePause: boolean) => void;
   setTimeRemaining: (timeRemaining: number) => void;
   addOneMinute: () => void;
+  addSkipCount: () => void;
   subOneMinute: () => void;
   startTimer: () => void;
   pauseTimer: () => void;
@@ -37,5 +40,6 @@ export interface TimerStoreState {
     pauseTime: number;
     pomodorosDone: number;
     timestamp: string;
+    skipCount: number;
   }) => void;
 }

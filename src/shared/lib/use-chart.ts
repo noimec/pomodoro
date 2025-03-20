@@ -15,7 +15,7 @@
 // ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 // export const useChart = () => {
-//   const [filteredData, setFilteredData] = useState(STATISTICS_DATA);
+//   const [filteredData, setFilteredData] = useState();
 
 //   const chartData: ChartData<'line'> = {
 //     labels: filteredData.map((data) => getDayOfWeek(data.date)),

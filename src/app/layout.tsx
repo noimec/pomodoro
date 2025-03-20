@@ -5,7 +5,6 @@ import { Roboto } from 'next/font/google';
 import clsx from 'clsx';
 
 import './globals.css';
-import { Header } from '@/shared/ui/header';
 
 const roboto = Roboto({
   subsets: ['cyrillic', 'latin'],
@@ -26,10 +25,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           'text-2xl text-[#333] dark:bg-[#34495E] dark:text-[#BDC3C7]',
         )}
       >
-        <header className='w-full px-0 py-4 text-[#DC3E22] shadow-md dark:bg-[#2C3E50] dark:text-[#ECF0F1]'>
-          <Header />
-        </header>
-        <main className='max-w-[1440px] mx-auto'>{children}</main>
+        <main>{children}</main>
         <div id='modal' />
       </body>
     </html>
