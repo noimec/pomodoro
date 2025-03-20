@@ -1,11 +1,14 @@
+import Link from 'next/link';
 import { FormProps } from './types';
 
 export const Form = ({ handleSubmit, onSubmit, title, register, errors }: FormProps) => {
+  const isLogin = title === 'Вход';
+
   return (
     <div className='w-full min-h-screen flex justify-center items-center py-24 px-20 bg-gray-100'>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className='flex flex-col w-96 p-6 bg-white rounded-2xl shadow-md gap-6'
+        className='flex flex-col w-96 p-6 bg-white rounded-2xl shadow-md gap-7'
       >
         <h1 className='text-center text-3xl'>{title}</h1>
 
@@ -66,6 +69,12 @@ export const Form = ({ handleSubmit, onSubmit, title, register, errors }: FormPr
         >
           Отправить
         </button>
+        <Link
+          className='text-[18px] opacity-80 hover:opacity-50 border-b border-transparent hover:border-black transition w-fit self-center'
+          href={isLogin ? '/signup' : '/login'}
+        >
+          {isLogin ? 'Регистрация' : 'Вход'}
+        </Link>
       </form>
     </div>
   );
