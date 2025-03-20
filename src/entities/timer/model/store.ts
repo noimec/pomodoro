@@ -8,6 +8,7 @@ export const timerStore = create<TimerStoreState>((set, get) => ({
   pauseTime: 0,
   stopCount: 0,
   workingTime: 0,
+  skipCount: 0,
   isStarted: false,
   isPaused: false,
   isRunning: false,
@@ -23,6 +24,7 @@ export const timerStore = create<TimerStoreState>((set, get) => ({
   setIsActivePause: (isActivePause) => set({ isActivePause }),
   setTimeRemaining: (timeRemaining) => set({ timeRemaining }),
 
+  addSkipCount: () => set((state) => ({ skipCount: state.skipCount + 1 })),
   addOneMinute: () => set((state) => ({ timeRemaining: state.timeRemaining + 60 })),
   subOneMinute: () =>
     set((state) => ({

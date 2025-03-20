@@ -14,7 +14,7 @@ export const useCountdown = () => {
     workingTime,
     pauseTime,
     startTime,
-    statisticArray,
+    skipCount,
     startTimer,
     pauseTimer,
     resetTimer,
@@ -22,9 +22,10 @@ export const useCountdown = () => {
     setTimeRemaining,
     setIsActivePause,
     addStatistic,
+    addSkipCount,
   } = timerStore();
   const { finishTask, setFullTimeValue, skipPomodoro, pomodorosDone, fullTimeValue } = tasksStore();
-  console.log(statisticArray);
+
   useEffect(() => {
     if (!isRunning) return;
 
@@ -47,14 +48,17 @@ export const useCountdown = () => {
             ? Math.floor((Date.now() - startTime) / 1000)
             : timeRemaining;
 
-          resetTimer();
-
-          addStatistic({
+          const updatedStatistics = {
             pauseTime: workingTime + TOTAL_TIME,
             workingTime: pauseTime + elapsedPauseTime,
-            pomodorosDone: pomodorosDone,
+            pomodorosDone,
             timestamp: new Date().toISOString(),
-          });
+            skipCount,
+          };
+
+          resetTimer();
+
+          addStatistic(updatedStatistics);
         }
       }
     }, 1000);
@@ -67,6 +71,7 @@ export const useCountdown = () => {
   };
 
   const skip = () => {
+    addSkipCount();
     resetTimer();
     if (!isActivePause) {
       skipPomodoro();

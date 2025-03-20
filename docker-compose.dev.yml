@@ -1,15 +1,4 @@
 services:
-  client:
-    build:
-      context: ./
-    ports:
-      - '3000:3000'
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres?schema=public
-    depends_on:
-      - db
-
   db:
     image: postgres
     environment:
@@ -21,11 +10,11 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - pomodoro
+      - pomodoro_dev
 
 networks:
-  pomodoro:
-    name: pomodoro
+  pomodoro_dev:
+    name: pomodoro_dev
     driver: bridge
 
 volumes:
