@@ -1,9 +1,9 @@
 'use client';
 
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 
 import { Form } from '@/shared/ui/form';
-import { useRouter } from 'next/navigation';
 
 interface IFormInput {
   username: string;

@@ -8,4 +8,7 @@ export const serverMessages = {
   SUCCESS_LOGIN: 'Login successfully',
   SUCCESS_REGISTRATION: 'Registration successfully',
   SUCCESS_LOGOUT: 'Logout successfully',
+  REFRESH_TOKEN_MISSING: 'Refresh token is missing',
+  INVALID_REFRESH_TOKEN: 'Invalid refresh token',
+  REFRESH_TOKEN_EXPIRED: 'Invalid or expired refresh token',
 } as const;

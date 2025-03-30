@@ -3,13 +3,17 @@ import bcrypt from 'bcrypt';
 import { SignJWT } from 'jose';
 
 import { PrismaClient } from '@prisma/client';
-import { COOKIES_HOURS, EXPIRES_HOURS, serverMessages, statusCodes } from '@/shared/config';
+import { COOKIES_HOURS_ACCESS, COOKIES_HOURS_REFRESH, EXPIRES_HOURS_ACCESS, EXPIRES_HOURS_REFRESH, serverMessages, statusCodes } from '@/shared/config';
 
 import { ErrorResponse, UserResponse } from '../types';
 
 const { BAD_REQUEST, CONFLICT, INTERNAL_SERVER_ERROR, CREATED } = statusCodes;
 const { FIELDS_REQUIRED, USER_EXISTS, SUCCESS_REGISTRATION, SERVER_ERROR } = serverMessages;
-const JWT_SECRET = process.env.JWT_SECRET;
+const ACCESS_SECRET = process.env.ACCESS_SECRET;
+const REFRESH_SECRET = process.env.REFRESH_SECRET;
+const accessSecret = new TextEncoder().encode(ACCESS_SECRET);
+const refreshSecret = new TextEncoder().encode(REFRESH_SECRET);
+const expiresAtRefresh = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 const db = new PrismaClient();
@@ -32,12 +36,15 @@ export async function POST(req: NextRequest): Promise<NextResponse<UserResponse 
       data: { username, password: hashedPassword },
     });
 
-    const secret = new TextEncoder().encode(JWT_SECRET);
-
-    const token = await new SignJWT({ userId: user.id })
+    const accessToken = await new SignJWT({ userId: user.id })
       .setProtectedHeader({ alg: 'HS256' })
-      .setExpirationTime(EXPIRES_HOURS)
-      .sign(secret);
+      .setExpirationTime(EXPIRES_HOURS_ACCESS)
+      .sign(accessSecret);
+
+    const refreshToken = await new SignJWT({ userId: user.id })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime(EXPIRES_HOURS_REFRESH)
+      .sign(refreshSecret);
 
     const filteredUser = { id: user.id, username: user.username };
 
@@ -46,12 +53,28 @@ export async function POST(req: NextRequest): Promise<NextResponse<UserResponse 
       { status: CREATED },
     );
 
-    response.cookies.set('token', token, {
-      maxAge: COOKIES_HOURS,
+    await db.refreshToken.create({
+      data: {
+        token: refreshToken,
+        userId: user.id,
+        expiresAt: expiresAtRefresh,
+        ipAddress: req.headers.get('x-real-ip'),
+        userAgent: req.headers.get('user-agent') || '',
+      }
+    })
+
+    response.cookies.set('access_token', accessToken, {
       httpOnly: true,
-      path: '/',
       secure: IS_PRODUCTION,
       sameSite: 'strict',
+      maxAge: COOKIES_HOURS_ACCESS
+    });
+
+    response.cookies.set('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: IS_PRODUCTION,
+      sameSite: 'strict',
+      maxAge: COOKIES_HOURS_REFRESH
     });
 
     return response;
