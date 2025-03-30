@@ -9,10 +9,11 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export async function middleware(req: NextRequest): Promise<NextResponse> {
   const headersToken = req.headers.get('Authorization')?.replace('Bearer ', '');
   const cookiesToken = req.cookies.get('token')?.value;
-  const pathName = req.nextUrl.pathname;
+  const pathName = req.nextUrl.pathname as PublicPaths;
   const token = headersToken || cookiesToken;
+  const loginUrl = new URL('/login', req.url);
 
-  const isPublicPath = publicPaths.includes(pathName as PublicPaths);
+  const isPublicPath = publicPaths.includes(pathName);
 
   if (isPublicPath) {
     return NextResponse.next();
@@ -22,7 +23,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     if (pathName.startsWith('/api/')) {
       return NextResponse.json({ message: AUTH_REQUIRED }, { status: UNAUTHORIZED });
     }
-    return NextResponse.redirect(new URL('/login', req.url));
+    return NextResponse.redirect(loginUrl);
   }
 
   try {
@@ -38,7 +39,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     if (pathName.startsWith('/api/')) {
       return NextResponse.json({ message: INVALID_TOKEN }, { status: UNAUTHORIZED });
     }
-    return NextResponse.redirect(new URL('/login', req.url));
+    return NextResponse.redirect(loginUrl);
   }
 }
 
