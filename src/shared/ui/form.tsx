@@ -18,21 +18,7 @@ export const Form = ({ handleSubmit, onSubmit, title, register, errors }: FormPr
               errors.username ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder='username'
-            {...register('username', {
-              required: 'Введите логин',
-              pattern: {
-                value: /^[A-Za-z]+$/i,
-                message: 'Только латинские буквы',
-              },
-              minLength: {
-                value: 3,
-                message: 'Минимум 3 символа',
-              },
-              maxLength: {
-                value: 20,
-                message: 'Не больше 20 символов',
-              },
-            })}
+            {...register('username')}
           />
           {errors.username && (
             <span className='text-red-500 text-sm absolute -bottom-5'>
@@ -48,13 +34,7 @@ export const Form = ({ handleSubmit, onSubmit, title, register, errors }: FormPr
               errors.password ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder='password'
-            {...register('password', {
-              required: 'Введите пароль',
-              pattern: {
-                value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
-                message: 'Минимум 6 символов, буквы и цифры',
-              },
-            })}
+            {...register('password')}
           />
           {errors.password && (
             <span className='text-red-500 text-sm absolute -bottom-5'>

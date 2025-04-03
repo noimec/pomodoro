@@ -10,3 +10,4 @@ export * from './constants/cookies-hours-refresh';
 export * from './status-codes';
 export * from './public-paths';
 export * from './server-messages';
+export * from './auth-schema';

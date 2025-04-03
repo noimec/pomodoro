@@ -1,21 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { statusCodes, serverMessages } from '@/shared/config';
+import prisma from '@/shared/lib/prisma';
 
 const { SUCCESS } = statusCodes;
 const { SUCCESS_LOGOUT } = serverMessages;
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
-  const response = NextResponse.json({ message: SUCCESS_LOGOUT }, { status: SUCCESS });
+export async function POST(req: NextRequest): Promise<NextResponse<{ message: string }>> {
+  try {
+    const refreshToken = req.cookies.get('refresh_token')?.value;
+    if (refreshToken) {
+      await prisma.refreshToken.delete({ where: { token: refreshToken } });
+    }
 
-  response.cookies.set('token', '', {
-    maxAge: 0,
-    httpOnly: true,
-    path: '/',
-    secure: IS_PRODUCTION,
-    sameSite: 'strict',
-  });
+    const response = NextResponse.json({ message: SUCCESS_LOGOUT }, { status: SUCCESS });
+    response.cookies.delete('access_token');
+    response.cookies.delete('refresh_token');
 
-  return response;
+    return response;
+  } catch (error) {
+    console.error('Logout error:', error);
+    return NextResponse.json({ message: SUCCESS_LOGOUT }, { status: SUCCESS });
+  }
 }
