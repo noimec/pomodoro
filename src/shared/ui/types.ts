@@ -1,6 +1,8 @@
 import { ButtonHTMLAttributes } from 'react';
-import { FieldErrors, UseFormRegister } from 'react-hook-form';
+import { z } from 'zod';
+import { FieldErrors, UseFormRegister, SubmitHandler } from 'react-hook-form';
 
+import { authSchema } from '../config';
 export interface CustomButtonProps {
   variant?: 'green' | 'red' | 'disabled';
   size?: 'default' | 'sm' | 'md';
@@ -8,17 +10,12 @@ export interface CustomButtonProps {
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & CustomButtonProps;
 
-export interface IFormInput {
-  username: string;
-  password: string;
-}
+type FormData = z.infer<typeof authSchema>;
 
 export interface FormProps {
-  handleSubmit: (
-    onSubmit: (data: IFormInput) => void,
-  ) => (e?: React.BaseSyntheticEvent) => Promise<void>;
-  onSubmit: (data: IFormInput) => void;
-  title: 'Вход' | 'Регистрация';
-  register: UseFormRegister<IFormInput>;
-  errors: FieldErrors<IFormInput>;
+  handleSubmit: (handler: SubmitHandler<FormData>) => (e: React.FormEvent) => void;
+  onSubmit: SubmitHandler<FormData>;
+  title: string;
+  register: UseFormRegister<FormData>;
+  errors: FieldErrors<FormData>;
 }
