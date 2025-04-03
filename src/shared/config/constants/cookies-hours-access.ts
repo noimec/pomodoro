@@ -1,0 +1,1 @@
+export const COOKIES_HOURS_ACCESS = 1_800;

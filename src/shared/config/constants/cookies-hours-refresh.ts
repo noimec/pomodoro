@@ -1,0 +1,1 @@
+export const COOKIES_HOURS_REFRESH = 604_800;

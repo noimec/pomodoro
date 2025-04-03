@@ -1,14 +1,14 @@
 'use client';
 
 import { useForm, SubmitHandler } from 'react-hook-form';
-
-import { Form } from '@/shared/ui/form';
+import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 
-interface IFormInput {
-  username: string;
-  password: string;
-}
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form } from '@/shared/ui/form';
+import { authSchema } from '@/shared/config';
+
+type FormData = z.infer<typeof authSchema>;
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -16,14 +16,15 @@ export default function SignUpPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IFormInput>({
+  } = useForm<FormData>({
+    resolver: zodResolver(authSchema),
     defaultValues: {
       username: '',
       password: '',
     },
   });
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
     try {
       const response = await fetch('/api/signup', {
         method: 'POST',
