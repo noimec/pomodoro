@@ -1,32 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify, SignJWT } from 'jose';
+import { cookies } from 'next/headers';
+import { jwtVerify } from 'jose';
 
 import {
+  ACCESS_SECRET,
   COOKIES_HOURS_ACCESS,
-  EXPIRES_HOURS_ACCESS,
+  encodedAccessSecret,
   PublicPaths,
   publicPaths,
   serverMessages,
   statusCodes,
 } from '@/shared/config';
+import { setCookies, clearCookies } from './shared/lib';
 
 const { UNAUTHORIZED } = statusCodes;
-const { AUTH_REQUIRED, INVALID_TOKEN, MISSING_SECRETS, INVALID_USER_IN_TOKEN } = serverMessages;
-const ACCESS_SECRET = process.env.ACCESS_SECRET || '';
-const REFRESH_SECRET = process.env.REFRESH_SECRET || '';
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const { AUTH_REQUIRED, MISSING_SECRETS, INVALID_USER_IN_TOKEN } = serverMessages;
 
-if (!ACCESS_SECRET || !REFRESH_SECRET) {
+if (!ACCESS_SECRET) {
   throw new Error(MISSING_SECRETS);
 }
 
-const encoder = new TextEncoder();
-const accessSecret = encoder.encode(ACCESS_SECRET);
-const refreshSecret = encoder.encode(REFRESH_SECRET);
-
 export async function middleware(req: NextRequest): Promise<NextResponse> {
-  const accessToken = req.cookies.get('access_token')?.value;
-  const refreshToken = req.cookies.get('refresh_token')?.value;
   const pathName = req.nextUrl.pathname as PublicPaths;
   const loginUrl = new URL('/login', req.url);
   const isPublicPath = publicPaths.includes(pathName);
@@ -35,52 +29,67 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     return NextResponse.next();
   }
 
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('access_token')?.value;
+  const sessionId = cookieStore.get('session_id')?.value;
+
+  if (!accessToken && !sessionId) {
+    return handleUnauthorized(req, pathName, loginUrl);
+  }
+
   if (accessToken) {
     try {
-      const { payload } = await jwtVerify(accessToken, accessSecret);
-
+      const { payload } = await jwtVerify(accessToken, encodedAccessSecret);
       const userId = typeof payload.userId === 'string' ? payload.userId : null;
+
       if (!userId) throw new Error(INVALID_USER_IN_TOKEN);
 
       req.headers.set('userId', userId);
-
       return NextResponse.next();
-    } catch (error) {}
-  }
-
-  if (!refreshToken) {
-    return pathName.startsWith('/api/')
-      ? NextResponse.json({ message: AUTH_REQUIRED }, { status: UNAUTHORIZED })
-      : NextResponse.redirect(loginUrl);
+    } catch (error) {
+      if (!sessionId) {
+        console.log('asd');
+        return handleUnauthorized(req, pathName, loginUrl);
+      }
+    }
   }
 
   try {
-    const { payload } = await jwtVerify(refreshToken, refreshSecret);
+    const sessionCheckUrl = new URL('/api/session', req.url);
+    const checkResponse = await fetch(sessionCheckUrl, {
+      headers: { Cookie: req.headers.get('Cookie') || '' },
+    });
 
-    const userId = typeof payload.userId === 'string' ? payload.userId : null;
-    if (!userId) throw new Error(INVALID_USER_IN_TOKEN);
+    if (!checkResponse.ok) {
+      clearCookies();
+      return handleUnauthorized(req, pathName, loginUrl);
+    }
 
-    const newAccessToken = await new SignJWT({ userId })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setExpirationTime(EXPIRES_HOURS_ACCESS)
-      .sign(encoder.encode(ACCESS_SECRET));
+    const { accessToken: newAccessToken, userId } = await checkResponse.json();
 
     const response = NextResponse.next();
-    response.cookies.set('access_token', newAccessToken, {
-      httpOnly: true,
-      secure: IS_PRODUCTION,
-      sameSite: 'strict',
+    setCookies({
+      key: 'access_token',
+      response: response,
       maxAge: COOKIES_HOURS_ACCESS,
+      token: newAccessToken,
     });
 
     req.headers.set('userId', userId);
-
     return response;
   } catch (error) {
-    return pathName.startsWith('/api/')
-      ? NextResponse.json({ message: INVALID_TOKEN }, { status: UNAUTHORIZED })
-      : NextResponse.redirect(loginUrl);
+    clearCookies();
+    return handleUnauthorized(req, pathName, loginUrl);
   }
+}
+
+function handleUnauthorized(req: NextRequest, pathName: string, loginUrl: URL) {
+  const response = pathName.startsWith('/api/')
+    ? NextResponse.json({ message: AUTH_REQUIRED }, { status: UNAUTHORIZED })
+    : NextResponse.redirect(loginUrl);
+
+  clearCookies(response);
+  return response;
 }
 
 export const config = {
@@ -88,5 +97,6 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico).*)',
     '/api/timer/:path*',
     '/api/tasks/:path*',
+    '/api/user',
   ],
 };

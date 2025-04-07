@@ -1,77 +1,49 @@
 'use client';
 
-import { useEffect } from 'react';
-
+import { useEffect, useState } from 'react';
 import { timerStore } from '@/entities/timer';
 import { tasksStore } from '@/entities/task';
-import { MAX_PAUSE, MIN_PAUSE, TOTAL_TIME } from '@/shared/config';
+import { MAX_PAUSE, MIN_PAUSE } from '@/shared/config';
+import { UseCountdownReturn } from './types';
 
-export const useCountdown = () => {
+export const useCountdown = (initialUserId?: string): UseCountdownReturn => {
+  const [userId, setUserId] = useState<string | null>(initialUserId || null);
   const {
-    isRunning,
     timeRemaining,
+    isRunning,
     isActivePause,
-    workingTime,
-    pauseTime,
-    startTime,
-    skipCount,
+    isPaused,
+    timerId,
+    type,
     startTimer,
     pauseTimer,
     resetTimer,
-    setIsRunning,
-    setTimeRemaining,
-    setIsActivePause,
-    addStatistic,
-    addSkipCount,
   } = timerStore();
   const { finishTask, setFullTimeValue, skipPomodoro, pomodorosDone, fullTimeValue } = tasksStore();
 
   useEffect(() => {
-    if (!isRunning) return;
+    if (!userId) {
+      fetch('/api/user')
+        .then((res) => {
+          if (!res.ok) throw new Error('Failed to fetch user');
+          return res.json();
+        })
+        .then((data) => setUserId(data.userId))
+        .catch((err) => console.error('Error fetching userId:', err));
+    }
+  }, [userId]);
 
-    const interval = setInterval(() => {
-      if (timeRemaining > 0) {
-        setTimeRemaining(timeRemaining - 1);
-      } else {
-        if (!isActivePause) {
-          const pauseDuration = (pomodorosDone + 1) % 4 === 0 ? MAX_PAUSE : MIN_PAUSE;
-
-          finishTask();
-          setFullTimeValue(fullTimeValue - 25);
-          setIsRunning(false);
-          setIsActivePause(true);
-
-          setTimeRemaining(pauseDuration);
-          setIsRunning(true);
-        } else {
-          const elapsedPauseTime = startTime
-            ? Math.floor((Date.now() - startTime) / 1000)
-            : timeRemaining;
-
-          const updatedStatistics = {
-            pauseTime: workingTime + TOTAL_TIME,
-            workingTime: pauseTime + elapsedPauseTime,
-            pomodorosDone,
-            timestamp: new Date().toISOString(),
-            skipCount,
-          };
-
-          resetTimer();
-
-          addStatistic(updatedStatistics);
-        }
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [isRunning, timeRemaining, pomodorosDone, isActivePause, startTime]);
+  const start = () => {
+    if (!userId) return;
+    startTimer(userId, 25 * 60, 'work');
+  };
 
   const pause = () => {
-    pauseTimer();
+    if (!timerId) return;
+    pauseTimer(timerId);
   };
 
   const skip = () => {
-    addSkipCount();
     resetTimer();
     if (!isActivePause) {
       skipPomodoro();
@@ -79,13 +51,57 @@ export const useCountdown = () => {
     }
   };
 
-  const start = () => {
-    startTimer();
-  };
-
   const resume = () => {
-    setIsRunning(true);
+    if (!timerId || !userId) return;
+    fetch('/api/timer', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ timerId, action: 'resume' }),
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error('Failed to resume timer');
+      })
+      .catch((err) => {
+        console.error('Failed to resume timer:', err);
+        startTimer(userId, timeRemaining, type || 'work');
+      });
   };
 
-  return { pause, skip, start, resume, isActivePause };
+  useEffect(() => {
+    if (isRunning && timeRemaining <= 0 && userId) {
+      if (!isActivePause) {
+        const pauseDuration = (pomodorosDone + 1) % 4 === 0 ? MAX_PAUSE : MIN_PAUSE;
+        finishTask();
+        setFullTimeValue(fullTimeValue - 25);
+        resetTimer();
+        startTimer(userId, pauseDuration, 'pause').catch((err) =>
+          console.error('Failed to start pause timer:', err),
+        );
+      } else {
+        resetTimer();
+      }
+    }
+  }, [
+    isRunning,
+    timeRemaining,
+    isActivePause,
+    pomodorosDone,
+    fullTimeValue,
+    userId,
+    startTimer,
+    resetTimer,
+    finishTask,
+    setFullTimeValue,
+  ]);
+
+  return {
+    pause,
+    skip,
+    start,
+    resume,
+    isActivePause,
+    timeRemaining,
+    isRunning,
+    isPaused,
+  };
 };

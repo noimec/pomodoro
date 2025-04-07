@@ -4,7 +4,7 @@ export const serverMessages = {
   USER_EXISTS: 'User already exists',
   INVALID_TOKEN: 'Invalid token',
   INCORRECT_DATA: 'Incorrect data',
-  SERVER_ERROR: 'Server error',
+  SERVER_ERROR: 'Internal Server Error',
   SUCCESS_LOGIN: 'Login successfully',
   SUCCESS_REGISTRATION: 'Registration successfully',
   SUCCESS_LOGOUT: 'Logout successfully',
@@ -15,4 +15,6 @@ export const serverMessages = {
   INVALID_USER_IN_TOKEN: 'Invalid userId in token',
   INVALID_ACCESS_TOKEN: 'Access token invalid or expired, proceed to refresh',
   USER_NOT_FOUND: 'User not found',
+  NO_SESSION: 'Session not found',
+  INVALID_SESSION: 'Invalid session',
 } as const;

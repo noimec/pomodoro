@@ -1,45 +1,33 @@
-interface StatisticsProps {
+export interface TimerUpdateData {
+  timerId: string;
+  remainingSeconds: number;
+  isActive: boolean;
+  type: string;
+  isPaused: boolean;
+}
+
+export interface StatisticsProps {
+  id: string;
+  userId: string;
+  timestamp: Date;
   workingTime: number;
   pauseTime: number;
   pomodorosDone: number;
-  timestamp: string;
   skipCount: number;
 }
 
 export interface TimerStoreState {
-  pauseTime: number;
-  stopCount: number;
-  workingTime: number;
-  isStarted: boolean;
-  isPaused: boolean;
+  timeRemaining: number;
   isRunning: boolean;
   isActivePause: boolean;
-  timeRemaining: number;
-  skipCount: number;
+  isPaused: boolean;
+  timerId: string | null;
+  type: string | null;
+  stats: StatisticsProps[];
 
-  statisticArray: Array<StatisticsProps>;
-
-  startTime?: number | null;
-
+  addStat: (stat: StatisticsProps) => void;
   setState: (state: Partial<TimerStoreState>) => void;
-  setIsStarted: (isStarted: boolean) => void;
-  setIsPaused: (isPaused: boolean) => void;
-  setIsRunning: (isRunning: boolean) => void;
-  setIsActivePause: (isActivePause: boolean) => void;
-  setTimeRemaining: (timeRemaining: number) => void;
-  addOneMinute: () => void;
-  addSkipCount: () => void;
-  subOneMinute: () => void;
-  startTimer: () => void;
-  pauseTimer: () => void;
+  startTimer: (userId: string, duration: number, type: string) => Promise<void>;
+  pauseTimer: (timerId: string) => Promise<void>;
   resetTimer: () => void;
-  incrementStopCount: () => void;
-
-  addStatistic: (stat: {
-    workingTime: number;
-    pauseTime: number;
-    pomodorosDone: number;
-    timestamp: string;
-    skipCount: number;
-  }) => void;
 }

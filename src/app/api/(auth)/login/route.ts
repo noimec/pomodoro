@@ -1,37 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
-import { SignJWT } from 'jose';
 import { z } from 'zod';
 
 import {
+  ACCESS_SECRET,
   authSchema,
   COOKIES_HOURS_ACCESS,
   COOKIES_HOURS_REFRESH,
+  encodedAccessSecret,
+  encodedRefreshSecret,
   EXPIRES_HOURS_ACCESS,
   EXPIRES_HOURS_REFRESH,
+  expiresRefreshDate,
+  REFRESH_SECRET,
   serverMessages,
   statusCodes,
 } from '@/shared/config';
 import prisma from '@/shared/lib/prisma';
+import { setCookies, signJWT } from '@/shared/lib';
 
-import { ErrorResponse, UserResponse } from '../types';
+import { ErrorResponse, UserResponse } from '../../types';
 
 const { UNAUTHORIZED, INTERNAL_SERVER_ERROR, SUCCESS, BAD_REQUEST } = statusCodes;
 const { INCORRECT_DATA, SERVER_ERROR, SUCCESS_LOGIN, MISSING_SECRETS } = serverMessages;
 
-const ACCESS_SECRET = process.env.ACCESS_SECRET;
-const REFRESH_SECRET = process.env.REFRESH_SECRET;
-
 if (!ACCESS_SECRET || !REFRESH_SECRET) {
   throw new Error(MISSING_SECRETS);
 }
-
-const encoder = new TextEncoder();
-const accessSecret = encoder.encode(ACCESS_SECRET);
-const refreshSecret = encoder.encode(REFRESH_SECRET);
-
-const expiresAtRefresh = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 export async function POST(req: NextRequest): Promise<NextResponse<UserResponse | ErrorResponse>> {
   try {
@@ -48,30 +43,34 @@ export async function POST(req: NextRequest): Promise<NextResponse<UserResponse 
       return NextResponse.json({ message: INCORRECT_DATA }, { status: UNAUTHORIZED });
     }
 
-    const accessToken = await new SignJWT({ userId: user.id })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setExpirationTime(EXPIRES_HOURS_ACCESS)
-      .sign(accessSecret);
+    const accessToken = await signJWT({
+      payload: { userId: user.id },
+      expiration: EXPIRES_HOURS_ACCESS,
+      secret: encodedAccessSecret,
+    });
+    const refreshToken = await signJWT({
+      payload: { userId: user.id },
+      expiration: EXPIRES_HOURS_REFRESH,
+      secret: encodedRefreshSecret,
+    });
 
-    const refreshToken = await new SignJWT({ userId: user.id })
-      .setProtectedHeader({ alg: 'HS256' })
-      .setExpirationTime(EXPIRES_HOURS_REFRESH)
-      .sign(refreshSecret);
-
-    const existingRefreshToken = req.cookies.get('refresh_token')?.value;
-    if (existingRefreshToken) {
+    const existingSession = req.cookies.get('session_id')?.value;
+    if (existingSession) {
       await prisma.refreshToken.deleteMany({
-        where: { token: existingRefreshToken, userId: user.id },
+        where: { sessionId: existingSession, userId: user.id },
       });
     }
 
-    await prisma.refreshToken.create({
+    const createdRefreshToken = await prisma.refreshToken.create({
       data: {
         token: refreshToken,
         userId: user.id,
-        expiresAt: expiresAtRefresh,
+        expiresAt: expiresRefreshDate,
         ipAddress: getUserIp,
         userAgent: getUserAgent,
+      },
+      select: {
+        sessionId: true,
       },
     });
 
@@ -81,18 +80,17 @@ export async function POST(req: NextRequest): Promise<NextResponse<UserResponse 
       { status: SUCCESS },
     );
 
-    response.cookies.set('access_token', accessToken, {
-      httpOnly: true,
-      secure: IS_PRODUCTION,
-      sameSite: 'strict',
+    setCookies({
+      key: 'access_token',
+      response: response,
       maxAge: COOKIES_HOURS_ACCESS,
+      token: accessToken,
     });
-
-    response.cookies.set('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: IS_PRODUCTION,
-      sameSite: 'strict',
+    setCookies({
+      key: 'session_id',
+      response: response,
       maxAge: COOKIES_HOURS_REFRESH,
+      token: createdRefreshToken.sessionId,
     });
 
     return response;

@@ -6,12 +6,12 @@ import { formatTime } from '../lib/format-time';
 import { getTimerData } from '../lib/get-timer-data';
 
 export const TimerDisplay = () => {
-  const { addOneMinute, subOneMinute, timeRemaining, isRunning } = getTimerData();
-
+  const { timeRemaining, isRunning } = getTimerData();
+  console.log('Time remaining:', timeRemaining);
   return (
     <div className='relative'>
       <button
-        onClick={() => subOneMinute()}
+        onClick={() => console.log('add minute')}
         disabled={isRunning}
         className='absolute top-1/2 -translate-y-1/2 -left-20'
       >
@@ -22,9 +22,9 @@ export const TimerDisplay = () => {
           )}
         />
       </button>
-      <div className='font-extralight text-[160px] leading-normal'>{formatTime(timeRemaining)}</div>
+      <div className='font-extralight text-[160px] leading-normal'>{timeRemaining}</div>
       <button
-        onClick={() => addOneMinute()}
+        onClick={() => console.log('remove 1 minute')}
         disabled={isRunning}
         className='absolute top-1/2 -translate-y-1/2 -right-20'
       >

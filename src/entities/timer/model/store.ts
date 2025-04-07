@@ -1,91 +1,73 @@
 import { create } from 'zustand';
+import { StatisticsProps, TimerStoreState, TimerUpdateData } from './types';
 
-import { TimerStoreState } from './types';
-
-import { TOTAL_TIME } from '@/shared/config';
-
-export const timerStore = create<TimerStoreState>((set, get) => ({
-  pauseTime: 0,
-  stopCount: 0,
-  workingTime: 0,
-  skipCount: 0,
-  isStarted: false,
-  isPaused: false,
+export const timerStore = create<TimerStoreState>((set) => ({
+  timeRemaining: 0,
   isRunning: false,
   isActivePause: false,
-  timeRemaining: TOTAL_TIME,
-  startTime: null,
-  statisticArray: [],
+  isPaused: false,
+  timerId: null,
+  type: null,
+  stats: [],
 
-  setState: (state) => set(state),
-  setIsStarted: (isStarted) => set({ isStarted }),
-  setIsPaused: (isPaused) => set({ isPaused }),
-  setIsRunning: (isRunning) => set({ isRunning }),
-  setIsActivePause: (isActivePause) => set({ isActivePause }),
-  setTimeRemaining: (timeRemaining) => set({ timeRemaining }),
+  setState: (state: Partial<TimerStoreState>) => set(state),
 
-  addSkipCount: () => set((state) => ({ skipCount: state.skipCount + 1 })),
-  addOneMinute: () => set((state) => ({ timeRemaining: state.timeRemaining + 60 })),
-  subOneMinute: () =>
-    set((state) => ({
-      timeRemaining:
-        state.timeRemaining > TOTAL_TIME ? state.timeRemaining - 60 : state.timeRemaining,
-    })),
+  addStat: (stat: StatisticsProps) => set((state) => ({ stats: [...state.stats, stat] })),
 
-  startTimer: () => {
-    const { isActivePause } = get();
-    if (!isActivePause) {
-      set({
-        isStarted: true,
-        isRunning: true,
-        startTime: Date.now(),
+  startTimer: async (userId: string, duration: number, type: string) => {
+    try {
+      // const existingTimer = await fetch(`/api/timer?userId=${userId}`).then((res) => res.json());
+
+      // if (existingTimer?.isActive) {
+      //   console.log('Active timer already exists:', existingTimer);
+      //   return;
+      // }
+
+      const response = await fetch('/api/timer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, duration, type }),
       });
-    }
-  },
 
-  pauseTimer: () => {
-    const { isPaused, isActivePause, workingTime, startTime } = get();
-    if (!isActivePause && startTime) {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      set({
-        isPaused: !isPaused,
-        isRunning: isPaused,
-        workingTime: workingTime + elapsed,
-        startTime: null,
-      });
-    }
-  },
-
-  resetTimer: () => {
-    const { isActivePause, workingTime, pauseTime, startTime } = get();
-    let updatedWorkingTime = workingTime;
-    let updatedPauseTime = pauseTime;
-
-    if (startTime) {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      if (isActivePause) {
-        updatedPauseTime += elapsed;
-      } else {
-        updatedWorkingTime += elapsed;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Failed to start timer: ${errorData.message}`);
       }
-    }
 
+      const data = await response.json();
+      set({ isPaused: false, timerId: data.timer.id });
+      console.log('Timer started:', data);
+    } catch (error) {
+      console.error('Error starting timer:', error);
+    }
+  },
+
+  pauseTimer: async (timerId: string) => {
+    try {
+      const response = await fetch('/api/timer', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ timerId, action: 'pause' }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to pause timer');
+      }
+
+      set({ isPaused: true, isRunning: false });
+      console.log('Timer paused');
+    } catch (error) {
+      console.error('Error pausing timer:', error);
+    }
+  },
+
+  resetTimer: () =>
     set({
-      timeRemaining: TOTAL_TIME,
-      isStarted: false,
-      isPaused: false,
+      timeRemaining: 0,
       isRunning: false,
       isActivePause: false,
-      workingTime: updatedWorkingTime,
-      pauseTime: updatedPauseTime,
-      startTime: null,
-    });
-  },
-
-  incrementStopCount: () => set((state) => ({ stopCount: state.stopCount + 1 })),
-
-  addStatistic: (stat) =>
-    set((state) => ({
-      statisticArray: [...state.statisticArray, stat],
-    })),
+      isPaused: false,
+      timerId: null,
+      type: null,
+    }),
 }));
