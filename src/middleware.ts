@@ -23,8 +23,8 @@ if (!ACCESS_SECRET) {
 export async function middleware(req: NextRequest): Promise<NextResponse> {
   const pathName = req.nextUrl.pathname as PublicPaths;
   const loginUrl = new URL('/login', req.url);
-  const isPublicPath = publicPaths.includes(pathName);
 
+  const isPublicPath = publicPaths.includes(pathName);
   if (isPublicPath) {
     return NextResponse.next();
   }
@@ -48,7 +48,6 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
       return NextResponse.next();
     } catch (error) {
       if (!sessionId) {
-        console.log('asd');
         return handleUnauthorized(req, pathName, loginUrl);
       }
     }
@@ -94,7 +93,7 @@ function handleUnauthorized(req: NextRequest, pathName: string, loginUrl: URL) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/session).*)',
     '/api/timer/:path*',
     '/api/tasks/:path*',
     '/api/user',

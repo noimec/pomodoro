@@ -22,7 +22,7 @@ export const TimerDisplay = () => {
           )}
         />
       </button>
-      <div className='font-extralight text-[160px] leading-normal'>{timeRemaining}</div>
+      <div className='font-extralight text-[160px] leading-normal'>{formatTime(timeRemaining)}</div>
       <button
         onClick={() => console.log('remove 1 minute')}
         disabled={isRunning}

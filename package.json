@@ -10,7 +10,8 @@
     "format": "prettier --write \"**/*.{js,jsx,json,ts,tsx,css,scss,html}\"",
     "prepare": "git config core.hooksPath .git-hooks || echo 'Not in a git repo'",
     "check:fsd": "npx steiger ./src",
-    "reset:db": "npx prisma db push --force-reset"
+    "reset:db": "npx prisma db push --force-reset",
+    "start:db": "docker compose -f docker-compose.dev.yml up"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",

@@ -1,13 +1,15 @@
 import { create } from 'zustand';
-import { StatisticsProps, TimerStoreState, TimerUpdateData } from './types';
+import { TimerStoreState, StatisticsProps } from './types';
 
-export const timerStore = create<TimerStoreState>((set) => ({
+export const timerStore = create<TimerStoreState>((set, get) => ({
   timeRemaining: 0,
   isRunning: false,
   isActivePause: false,
   isPaused: false,
   timerId: null,
   type: null,
+  startTime: null,
+  duration: 0,
   stats: [],
 
   setState: (state: Partial<TimerStoreState>) => set(state),
@@ -16,13 +18,6 @@ export const timerStore = create<TimerStoreState>((set) => ({
 
   startTimer: async (userId: string, duration: number, type: string) => {
     try {
-      // const existingTimer = await fetch(`/api/timer?userId=${userId}`).then((res) => res.json());
-
-      // if (existingTimer?.isActive) {
-      //   console.log('Active timer already exists:', existingTimer);
-      //   return;
-      // }
-
       const response = await fetch('/api/timer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -35,7 +30,16 @@ export const timerStore = create<TimerStoreState>((set) => ({
       }
 
       const data = await response.json();
-      set({ isPaused: false, timerId: data.timer.id });
+      const now = new Date();
+      set({
+        isRunning: true,
+        isPaused: false,
+        timerId: data.timer.id,
+        type,
+        startTime: now,
+        duration: duration * 1000,
+        timeRemaining: duration * 1000,
+      });
       console.log('Timer started:', data);
     } catch (error) {
       console.error('Error starting timer:', error);
@@ -54,10 +58,42 @@ export const timerStore = create<TimerStoreState>((set) => ({
         throw new Error('Failed to pause timer');
       }
 
-      set({ isPaused: true, isRunning: false });
+      const { startTime, duration } = get();
+      const pausedAt = new Date();
+      const elapsed = pausedAt.getTime() - startTime!.getTime();
+      set({
+        isPaused: true,
+        isRunning: false,
+        timeRemaining: duration - elapsed,
+      });
       console.log('Timer paused');
     } catch (error) {
       console.error('Error pausing timer:', error);
+    }
+  },
+
+  resumeTimer: async (timerId: string) => {
+    try {
+      const response = await fetch('/api/timer', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ timerId, action: 'resume' }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to resume timer');
+      }
+
+      const { timeRemaining } = get();
+      set({
+        isRunning: true,
+        isPaused: false,
+        startTime: new Date(),
+        duration: timeRemaining,
+      });
+      console.log('Timer resumed');
+    } catch (error) {
+      console.error('Error resuming timer:', error);
     }
   },
 
@@ -69,5 +105,7 @@ export const timerStore = create<TimerStoreState>((set) => ({
       isPaused: false,
       timerId: null,
       type: null,
+      startTime: null,
+      duration: 0,
     }),
 }));

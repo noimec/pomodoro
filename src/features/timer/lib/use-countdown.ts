@@ -15,8 +15,11 @@ export const useCountdown = (initialUserId?: string): UseCountdownReturn => {
     isPaused,
     timerId,
     type,
+    startTime,
+    duration,
     startTimer,
     pauseTimer,
+    resumeTimer,
     resetTimer,
   } = timerStore();
   const { finishTask, setFullTimeValue, skipPomodoro, pomodorosDone, fullTimeValue } = tasksStore();
@@ -32,6 +35,39 @@ export const useCountdown = (initialUserId?: string): UseCountdownReturn => {
         .catch((err) => console.error('Error fetching userId:', err));
     }
   }, [userId]);
+
+  useEffect(() => {
+    if (!isRunning || isPaused || !startTime) return;
+
+    const updateTime = () => {
+      const now = new Date();
+      const elapsed = now.getTime() - startTime.getTime();
+      const remaining = Math.max(duration - elapsed, 0);
+      timerStore.setState({ timeRemaining: remaining });
+
+      if (remaining <= 0) {
+        handleTimerEnd();
+      }
+    };
+
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, [isRunning, isPaused, startTime, duration]);
+
+  const handleTimerEnd = () => {
+    if (!userId) return;
+    if (!isActivePause) {
+      const pauseDuration = (pomodorosDone + 1) % 4 === 0 ? MAX_PAUSE : MIN_PAUSE;
+      finishTask();
+      setFullTimeValue(fullTimeValue - 25);
+      resetTimer();
+      startTimer(userId, pauseDuration, 'pause').catch((err) =>
+        console.error('Failed to start pause timer:', err),
+      );
+    } else {
+      resetTimer();
+    }
+  };
 
   const start = () => {
     if (!userId) return;
@@ -53,46 +89,8 @@ export const useCountdown = (initialUserId?: string): UseCountdownReturn => {
 
   const resume = () => {
     if (!timerId || !userId) return;
-    fetch('/api/timer', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ timerId, action: 'resume' }),
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error('Failed to resume timer');
-      })
-      .catch((err) => {
-        console.error('Failed to resume timer:', err);
-        startTimer(userId, timeRemaining, type || 'work');
-      });
+    resumeTimer(timerId);
   };
-
-  useEffect(() => {
-    if (isRunning && timeRemaining <= 0 && userId) {
-      if (!isActivePause) {
-        const pauseDuration = (pomodorosDone + 1) % 4 === 0 ? MAX_PAUSE : MIN_PAUSE;
-        finishTask();
-        setFullTimeValue(fullTimeValue - 25);
-        resetTimer();
-        startTimer(userId, pauseDuration, 'pause').catch((err) =>
-          console.error('Failed to start pause timer:', err),
-        );
-      } else {
-        resetTimer();
-      }
-    }
-  }, [
-    isRunning,
-    timeRemaining,
-    isActivePause,
-    pomodorosDone,
-    fullTimeValue,
-    userId,
-    startTimer,
-    resetTimer,
-    finishTask,
-    setFullTimeValue,
-  ]);
 
   return {
     pause,

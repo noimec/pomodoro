@@ -20,6 +20,8 @@ export interface TimerStoreState {
   timeRemaining: number;
   isRunning: boolean;
   isActivePause: boolean;
+  startTime: Date | null;
+  duration: number;
   isPaused: boolean;
   timerId: string | null;
   type: string | null;
@@ -30,4 +32,5 @@ export interface TimerStoreState {
   startTimer: (userId: string, duration: number, type: string) => Promise<void>;
   pauseTimer: (timerId: string) => Promise<void>;
   resetTimer: () => void;
+  resumeTimer: (timerId: string) => Promise<void>;
 }

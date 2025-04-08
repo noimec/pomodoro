@@ -8,8 +8,6 @@ export const TimerButtons = () => {
   const { pause, skip, start, resume, isActivePause } = useCountdown();
   const { isRunning, isPaused, tasksIsEmpty } = getTimerData();
 
-  console.log({ isRunning, isPaused, isActivePause, tasksIsEmpty }); // Debug
-
   return (
     <div>
       {isRunning && !isPaused ? (
@@ -42,7 +40,7 @@ export const TimerButtons = () => {
           ) : (
             <Button
               onClick={start}
-              disabled={tasksIsEmpty || isActivePause || isRunning} // Add isRunning
+              disabled={tasksIsEmpty || isActivePause || isRunning}
               size='sm'
               variant='green'
               className='mr-6'
