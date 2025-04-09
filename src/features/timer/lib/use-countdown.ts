@@ -1,48 +1,35 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { timerStore } from '@/entities/timer';
-import { tasksStore } from '@/entities/task';
-import { MAX_PAUSE, MIN_PAUSE } from '@/shared/config';
+import { useEffect } from 'react';
+
+import { Stat, timerStore } from '@/entities/timer';
 import { UseCountdownReturn } from './types';
 
-export const useCountdown = (initialUserId?: string): UseCountdownReturn => {
-  const [userId, setUserId] = useState<string | null>(initialUserId || null);
+export const useCountdown = (): UseCountdownReturn => {
   const {
+    tasks,
+    currentTimer,
     timeRemaining,
     isRunning,
-    isActivePause,
     isPaused,
-    timerId,
-    type,
-    startTime,
-    duration,
     startTimer,
     pauseTimer,
     resumeTimer,
+    skipTimer,
     resetTimer,
+    currentTaskId,
+    addStat,
+    userId,
   } = timerStore();
-  const { finishTask, setFullTimeValue, skipPomodoro, pomodorosDone, fullTimeValue } = tasksStore();
 
   useEffect(() => {
-    if (!userId) {
-      fetch('/api/user')
-        .then((res) => {
-          if (!res.ok) throw new Error('Failed to fetch user');
-          return res.json();
-        })
-        .then((data) => setUserId(data.userId))
-        .catch((err) => console.error('Error fetching userId:', err));
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    if (!isRunning || isPaused || !startTime) return;
+    if (!userId) return;
+    if (!isRunning || isPaused || !currentTimer?.startTime) return;
 
     const updateTime = () => {
       const now = new Date();
-      const elapsed = now.getTime() - startTime.getTime();
-      const remaining = Math.max(duration - elapsed, 0);
+      const elapsed = now.getTime() - currentTimer.startTime!.getTime();
+      const remaining = Math.max(currentTimer.duration * 1000 - elapsed, 0);
       timerStore.setState({ timeRemaining: remaining });
 
       if (remaining <= 0) {
@@ -52,52 +39,68 @@ export const useCountdown = (initialUserId?: string): UseCountdownReturn => {
 
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, [isRunning, isPaused, startTime, duration]);
+  }, [isPaused, isRunning, currentTimer]);
 
-  const handleTimerEnd = () => {
-    if (!userId) return;
-    if (!isActivePause) {
-      const pauseDuration = (pomodorosDone + 1) % 4 === 0 ? MAX_PAUSE : MIN_PAUSE;
-      finishTask();
-      setFullTimeValue(fullTimeValue - 25);
-      resetTimer();
-      startTimer(userId, pauseDuration, 'pause').catch((err) =>
-        console.error('Failed to start pause timer:', err),
-      );
-    } else {
-      resetTimer();
+  const handleTimerEnd = async () => {
+    const { currentTimer } = timerStore.getState();
+    if (!currentTimer || !userId) return;
+
+    await fetch('/api/timer', {
+      method: 'PATCH',
+      body: JSON.stringify({ id: currentTimer.id, action: 'complete' }),
+    });
+
+    const stat: Stat = {
+      userId,
+      timestamp: new Date(),
+      workingTime: currentTimer.type === 'work' ? currentTimer.duration : 0,
+      pauseTime: currentTimer.type === 'pause' ? currentTimer.duration : 0,
+      pomodorosDone: currentTimer.type === 'work' ? 1 : 0,
+      skipCount: 0,
+    };
+    addStat(stat);
+
+    await fetch('/api/statistics', {
+      method: 'POST',
+      body: JSON.stringify(stat),
+    });
+
+    timerStore.setState((state) => {
+      const newTasks = currentTimer.taskId
+        ? state.tasks.map((task) =>
+            task.id === currentTimer.taskId
+              ? {
+                  ...task,
+                  pomodoros: task.pomodoros - 1,
+                  completed: task.pomodoros - 1 <= 0,
+                }
+              : task,
+          )
+        : state.tasks;
+      return {
+        tasks: newTasks,
+        currentTimer: null,
+        isRunning: false,
+        timeRemaining: 0,
+      };
+    });
+
+    if (currentTimer.type === 'work') {
+      const pauseDuration =
+        tasks.flatMap((t) => t.timers).filter((t) => t.type === 'work' && !t.isActive).length %
+          4 ===
+        0
+          ? 15 * 60
+          : 5 * 60;
+      startTimer(null, pauseDuration, 'pause', userId);
     }
-  };
-
-  const start = () => {
-    if (!userId) return;
-    startTimer(userId, 25 * 60, 'work');
-  };
-
-  const pause = () => {
-    if (!timerId) return;
-    pauseTimer(timerId);
-  };
-
-  const skip = () => {
-    resetTimer();
-    if (!isActivePause) {
-      skipPomodoro();
-      setFullTimeValue(fullTimeValue - 25);
-    }
-  };
-
-  const resume = () => {
-    if (!timerId || !userId) return;
-    resumeTimer(timerId);
   };
 
   return {
-    pause,
-    skip,
-    start,
-    resume,
-    isActivePause,
+    start: () => startTimer(currentTaskId, 25 * 60, 'work', userId!),
+    pause: pauseTimer,
+    resume: resumeTimer,
+    skip: skipTimer,
     timeRemaining,
     isRunning,
     isPaused,

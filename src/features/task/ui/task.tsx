@@ -1,9 +1,7 @@
 'use client';
 
 import { FC } from 'react';
-
 import { SvgDots } from '@/shared/ui/icons';
-
 import { TaskProps } from './types';
 import { useTask } from '../lib/use-task';
 import { TaskDropdown } from './task-dropdown';
@@ -23,6 +21,7 @@ export const Task: FC<TaskProps> = ({ text, id }) => {
     actions,
     setIsOpen,
     setEditValue,
+    setModalOpen,
   } = useTask(id, text);
 
   return (
@@ -49,7 +48,12 @@ export const Task: FC<TaskProps> = ({ text, id }) => {
             onModalOpen={actions.handleModalOpen}
             modalOpen={modalOpen}
             onEdit={actions.handleEdit}
-            taskModal={<TaskModal removeItem={actions.handleRemove} />}
+            taskModal={
+              <TaskModal
+                handleClick={() => setModalOpen(false)}
+                removeItem={actions.handleRemove}
+              />
+            }
           />
         </div>
       )}

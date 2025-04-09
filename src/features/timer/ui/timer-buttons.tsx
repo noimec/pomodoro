@@ -5,7 +5,7 @@ import { useCountdown } from '../lib/use-countdown';
 import { getTimerData } from '../lib/get-timer-data';
 
 export const TimerButtons = () => {
-  const { pause, skip, start, resume, isActivePause } = useCountdown();
+  const { pause, skip, start, resume } = useCountdown();
   const { isRunning, isPaused, tasksIsEmpty } = getTimerData();
 
   return (
@@ -14,7 +14,7 @@ export const TimerButtons = () => {
         <>
           <Button
             onClick={pause}
-            disabled={tasksIsEmpty || isActivePause}
+            disabled={tasksIsEmpty}
             size='sm'
             variant='green'
             className='mr-6'
@@ -30,7 +30,7 @@ export const TimerButtons = () => {
           {isPaused ? (
             <Button
               onClick={resume}
-              disabled={tasksIsEmpty || isActivePause}
+              disabled={tasksIsEmpty}
               size='md'
               variant='green'
               className='mr-6'
@@ -40,7 +40,7 @@ export const TimerButtons = () => {
           ) : (
             <Button
               onClick={start}
-              disabled={tasksIsEmpty || isActivePause || isRunning}
+              disabled={tasksIsEmpty || isRunning}
               size='sm'
               variant='green'
               className='mr-6'
@@ -48,7 +48,7 @@ export const TimerButtons = () => {
               Старт
             </Button>
           )}
-          <Button onClick={skip} disabled={tasksIsEmpty || isActivePause} size='sm' variant='red'>
+          <Button onClick={skip} disabled={tasksIsEmpty} size='sm' variant='red'>
             Стоп
           </Button>
         </>

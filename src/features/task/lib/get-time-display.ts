@@ -1,16 +1,15 @@
-import { getTasksArray, tasksStore } from '@/entities/task';
+import { timerStore } from '@/entities/timer';
 
 export const getTimeDisplay = () => {
-  const { fullTimeValue } = tasksStore();
-  const tasksArray = getTasksArray();
+  const { tasks, timeRemaining } = timerStore();
 
-  const hours = Math.floor(fullTimeValue / 60);
+  const hours = Math.floor(timeRemaining / 60);
   const hoursString = `${hours} час `;
-  const minutesString = `${fullTimeValue % 60} минут`;
+  const minutesString = `${timeRemaining % 60} минут`;
 
   return {
     hours,
-    tasksArray,
+    tasks,
     hoursString,
     minutesString,
   };

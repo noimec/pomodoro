@@ -1,7 +1,7 @@
-export const formatTime = (time: number) => {
-  const hours = Math.round(time / 60);
-  const minutes = time % 60;
-  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+export const formatTime = (timeInMs: number) => {
+  const totalSeconds = Math.floor(timeInMs / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
 
-  return `${hours}:${formattedMinutes}`;
+  return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
 };

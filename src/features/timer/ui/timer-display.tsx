@@ -7,7 +7,8 @@ import { getTimerData } from '../lib/get-timer-data';
 
 export const TimerDisplay = () => {
   const { timeRemaining, isRunning } = getTimerData();
-  console.log('Time remaining:', timeRemaining);
+  const timer = formatTime(timeRemaining);
+
   return (
     <div className='relative'>
       <button
@@ -22,7 +23,7 @@ export const TimerDisplay = () => {
           )}
         />
       </button>
-      <div className='font-extralight text-[160px] leading-normal'>{formatTime(timeRemaining)}</div>
+      <div className='font-extralight text-[160px] leading-normal'>{timer}</div>
       <button
         onClick={() => console.log('remove 1 minute')}
         disabled={isRunning}

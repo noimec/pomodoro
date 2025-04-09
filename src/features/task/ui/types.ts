@@ -1,4 +1,4 @@
-import { RefObject, ReactNode } from 'react';
+import { MouseEventHandler, ReactNode } from 'react';
 
 export interface TaskProps {
   id: string;
@@ -16,6 +16,7 @@ export interface TaskDropdownProps {
 
 export interface TaskModalProps {
   removeItem: () => void;
+  handleClick: MouseEventHandler<HTMLButtonElement>;
 }
 
 export interface TaskInputProps {

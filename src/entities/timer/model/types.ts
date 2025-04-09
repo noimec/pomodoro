@@ -1,13 +1,22 @@
-export interface TimerUpdateData {
-  timerId: string;
-  remainingSeconds: number;
+export interface Timer {
+  id: string;
+  taskId?: string;
+  startTime: Date | null;
+  pausedAt: Date | null;
+  duration: number;
   isActive: boolean;
-  type: string;
-  isPaused: boolean;
+  type: 'work' | 'pause';
 }
 
-export interface StatisticsProps {
+export interface Task {
   id: string;
+  title: string;
+  completed: boolean;
+  pomodoros: number;
+  timers: Timer[];
+}
+
+export interface Stat {
   userId: string;
   timestamp: Date;
   workingTime: number;
@@ -16,21 +25,34 @@ export interface StatisticsProps {
   skipCount: number;
 }
 
-export interface TimerStoreState {
+export interface TimerState {
+  tasks: Task[];
+  currentTimer: Timer | null;
+  currentTaskId: string | null;
+  userId: string | null;
   timeRemaining: number;
   isRunning: boolean;
-  isActivePause: boolean;
-  startTime: Date | null;
-  duration: number;
   isPaused: boolean;
-  timerId: string | null;
-  type: string | null;
-  stats: StatisticsProps[];
+  stats: Stat[];
 
-  addStat: (stat: StatisticsProps) => void;
-  setState: (state: Partial<TimerStoreState>) => void;
-  startTimer: (userId: string, duration: number, type: string) => Promise<void>;
-  pauseTimer: (timerId: string) => Promise<void>;
+  initialize: () => Promise<void>;
+  setCurrentTask: (taskId: string | null) => void;
+  addTask: (title: string, userId: string) => Promise<void>;
+  editTaskTitle: (id: string, title: string) => Promise<void>;
+  removeTask: (id: string) => Promise<void>;
+  fetchTasks: () => Promise<void>;
+  updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
+
+  startTimer: (
+    taskId: string | null,
+    duration: number,
+    type: 'work' | 'pause',
+    userId: string,
+  ) => Promise<void>;
+  pauseTimer: () => Promise<void>;
+  resumeTimer: () => Promise<void>;
+  skipTimer: () => Promise<void>;
   resetTimer: () => void;
-  resumeTimer: (timerId: string) => Promise<void>;
+
+  addStat: (stat: Stat) => void;
 }

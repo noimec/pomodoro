@@ -45,10 +45,12 @@ model Timer {
   id        String    @id @default(uuid())
   user      User      @relation(fields: [userId], references: [id])
   userId    String
-  startTime DateTime
+  task      Task?     @relation(fields: [taskId], references: [id])
+  taskId    String?
+  startTime DateTime?
   pausedAt  DateTime?
   duration  Int
-  isActive  Boolean
+  isActive  Boolean   @default(false)
   type      String
 }
 
@@ -58,6 +60,7 @@ model Task {
   userId    String
   title     String
   completed Boolean  @default(false)
-  pomodoros Int      @default(0)
+  pomodoros Int      @default(1)
+  timers    Timer[]
   createdAt DateTime @default(now())
 }

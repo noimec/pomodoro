@@ -1,24 +1,24 @@
 'use client';
 
-import { useState } from 'react';
-
-import { tasksStore } from '@/entities/task';
+import { useState, useMemo } from 'react';
+import { useStore } from 'zustand';
 import { useOutsideClick } from '@/shared/lib';
+import { timerStore } from '@/entities/timer';
 
 export const useTask = (id: string, initialText: string) => {
-  const { actions, modalOpen, setModalOpen, fullTimeValue, setFullTimeValue, getTaskById } =
-    tasksStore();
+  const { tasks, currentTimer, editTaskTitle, removeTask, updateTask } = useStore(timerStore);
 
-  const task = getTaskById(id);
+  const task = useMemo(() => tasks.find((t) => t.id === id), [tasks, id]);
+
+  if (!task) {
+    throw new Error(`Task with id ${id} not found`);
+  }
 
   const [isOpen, setIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [disable, setDisable] = useState(true);
   const [editValue, setEditValue] = useState(initialText);
-
-  if (!task) {
-    throw new Error(`Task with id ${id} not found`);
-  }
+  const [modalOpen, setModalOpen] = useState(false);
 
   const dropdownRef = useOutsideClick(() => {
     if (!modalOpen) {
@@ -38,31 +38,21 @@ export const useTask = (id: string, initialText: string) => {
     setIsEditing(true);
   };
 
-  const handleSave = () => {
-    if (editValue) {
-      actions.updateTask(id, { value: editValue });
+  const handleSave = async () => {
+    if (editValue && editValue !== task.title) {
+      await editTaskTitle(id, editValue);
     }
     setIsEditing(false);
     setDisable(true);
   };
 
-  const handleIncrease = () => {
-    const newPomodoros = task.pomodoros + 1;
-    actions.updateTask(id, { pomodoros: newPomodoros });
-    setFullTimeValue(fullTimeValue + 25);
-  };
-
-  const handleDecrease = () => {
-    const newPomodoros = Math.max(1, task.pomodoros - 1);
-    actions.updateTask(id, { pomodoros: newPomodoros });
-    if (task.pomodoros > 1) {
-      setFullTimeValue(fullTimeValue - 25);
-    }
-  };
+  const handleIncrease = () => updateTask(id, { pomodoros: task.pomodoros + 1 });
+  const handleDecrease = () => updateTask(id, { pomodoros: Math.max(1, task.pomodoros - 1) });
 
   return {
     task,
     modalOpen,
+    setModalOpen,
     isOpen,
     setIsOpen,
     isEditing,
@@ -71,13 +61,14 @@ export const useTask = (id: string, initialText: string) => {
     setEditValue,
     inputRef,
     dropdownRef,
+    currentTimer,
     actions: {
       handleEdit,
       handleSave,
       handleIncrease,
       handleDecrease,
       handleModalOpen: () => setModalOpen(true),
-      handleRemove: () => actions.removeTask(id),
+      handleRemove: () => removeTask(id),
     },
   };
 };

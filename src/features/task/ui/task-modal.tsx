@@ -7,10 +7,10 @@ import { SvgExit } from '@/shared/ui/icons';
 import { Button } from '@/shared/ui/button';
 
 import { TaskModalProps } from './types';
-import { useTaskModalActions } from '../lib/use-task-modal-actions';
+import { useOutsideClick } from '@/shared/lib';
 
-export const TaskModal: FC<TaskModalProps> = ({ removeItem }) => {
-  const { ref, setModalOpen, handleClick } = useTaskModalActions({ removeItem });
+export const TaskModal: FC<TaskModalProps> = ({ removeItem, handleClick }) => {
+  const ref = useOutsideClick(() => handleClick);
   const node = document.querySelector('#modal');
 
   if (!node) return;
@@ -24,16 +24,16 @@ export const TaskModal: FC<TaskModalProps> = ({ removeItem }) => {
         <div className='mb-6 text-[#333] dark:text-[#ECF0F1] text-2xl font-normal'>
           Удалить задачу?
         </div>
-        <Button size='default' variant='red' onClick={handleClick}>
+        <Button size='default' variant='red' onClick={removeItem}>
           Удалить
         </Button>
-        <button onClick={() => setModalOpen(false)}>
+        <button onClick={handleClick}>
           <span className='pb-1 text-base text-[#333] dark:text-[#ECF0F1] dark:hover:border-[#ECF0F1] font-light hover:border-b hover:border-[#333] transition-all'>
             Отмена
           </span>
         </button>
         <button
-          onClick={() => setModalOpen(false)}
+          onClick={handleClick}
           className='absolute top-3 right-3 text-[#C4C4C4] hover:text-[#DC3E22] transition-colors'
         >
           <SvgExit />
