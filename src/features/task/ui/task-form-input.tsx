@@ -4,10 +4,14 @@ import { Button } from '@/shared/ui/button';
 import { useFormData } from '../lib/use-form-data';
 
 export const TaskFormInput = () => {
-  const { handleSubmit, onChange, inputValue, isLoading } = useFormData();
+  const { handleSubmit, onChange, inputValue, isLoading, isError, error } = useFormData();
 
   if (isLoading) {
     return <div>Загрузка...</div>;
+  }
+
+  if (isError) {
+    return <div>Ошибка загрузки пользователя: {JSON.stringify(error)}</div>;
   }
 
   return (
@@ -19,7 +23,13 @@ export const TaskFormInput = () => {
         placeholder='Название задачи'
         type='text'
       />
-      <Button size='sm' variant='green' onClick={handleSubmit} className='mb-[26px]'>
+      <Button
+        size='sm'
+        variant='green'
+        onClick={handleSubmit}
+        className='mb-[26px]'
+        disabled={isLoading}
+      >
         Добавить
       </Button>
     </>

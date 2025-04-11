@@ -5,6 +5,7 @@ import { Roboto } from 'next/font/google';
 import clsx from 'clsx';
 
 import './globals.css';
+import StoreProvider from './StoreProvider';
 
 const roboto = Roboto({
   subsets: ['cyrillic', 'latin'],
@@ -19,15 +20,17 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang='en'>
-      <body
-        className={clsx(
-          roboto.className,
-          'text-2xl text-[#333] dark:bg-[#34495E] dark:text-[#BDC3C7]',
-        )}
-      >
-        <main>{children}</main>
-        <div id='modal' />
-      </body>
+      <StoreProvider>
+        <body
+          className={clsx(
+            roboto.className,
+            'text-2xl text-[#333] dark:bg-[#34495E] dark:text-[#BDC3C7]',
+          )}
+        >
+          <main>{children}</main>
+          <div id='modal' />
+        </body>
+      </StoreProvider>
     </html>
   );
 }

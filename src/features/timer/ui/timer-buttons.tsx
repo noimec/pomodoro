@@ -2,11 +2,11 @@
 
 import { Button } from '@/shared/ui/button';
 import { useCountdown } from '../lib/use-countdown';
-import { getTimerData } from '../lib/get-timer-data';
+import { useTimerData } from '../lib/use-timer-data';
 
 export const TimerButtons = () => {
   const { pause, skip, start, resume } = useCountdown();
-  const { isRunning, isPaused, tasksIsEmpty } = getTimerData();
+  const { isRunning, isPaused, tasksIsEmpty } = useTimerData();
 
   return (
     <div>

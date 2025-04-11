@@ -1,14 +1,28 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useStore } from 'zustand';
 import { useOutsideClick } from '@/shared/lib';
-import { timerStore } from '@/entities/timer';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/entities/timer';
+import {
+  useEditTaskTitleMutation,
+  useGetTasksQuery,
+  useGetUserQuery,
+  useRemoveTaskMutation,
+  useUpdateTaskMutation,
+} from '@/entities/timer/services';
 
 export const useTask = (id: string, initialText: string) => {
-  const { tasks, currentTimer, editTaskTitle, removeTask, updateTask } = useStore(timerStore);
+  const { data: userId } = useGetUserQuery();
+  const currentTimer = useSelector((state: RootState) => state.timer.currentTimer);
+  const { data: tasksData } = useGetTasksQuery(userId || '', { skip: !userId });
+  const tasks = tasksData?.tasks;
 
-  const task = useMemo(() => tasks.find((t) => t.id === id), [tasks, id]);
+  const [editTaskTitle] = useEditTaskTitleMutation();
+  const [removeTask] = useRemoveTaskMutation();
+  const [updateTask] = useUpdateTaskMutation();
+
+  const task = useMemo(() => tasks!.find((t) => t.id === id), [tasks, id]);
 
   if (!task) {
     throw new Error(`Task with id ${id} not found`);
@@ -40,17 +54,19 @@ export const useTask = (id: string, initialText: string) => {
 
   const handleSave = async () => {
     if (editValue && editValue !== task.title) {
-      await editTaskTitle(id, editValue);
+      await editTaskTitle({ id, title: editValue }).unwrap();
     }
     setIsEditing(false);
     setDisable(true);
   };
 
-  const handleIncrease = () => updateTask(id, { pomodoros: task.pomodoros + 1 });
-  const handleDecrease = () => updateTask(id, { pomodoros: Math.max(1, task.pomodoros - 1) });
+  const handleIncrease = () => updateTask({ id, updates: { pomodoros: task.pomodoros + 1 } });
+  const handleDecrease = () =>
+    updateTask({ id, updates: { pomodoros: Math.max(1, task.pomodoros - 1) } });
 
   return {
     task,
+    tasks,
     modalOpen,
     setModalOpen,
     isOpen,

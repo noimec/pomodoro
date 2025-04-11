@@ -1,8 +1,8 @@
 export interface UseCountdownReturn {
+  start: () => void;
   pause: () => void;
-  skip: () => void;
-  start: () => Promise<void>;
   resume: () => void;
+  skip: () => void;
   timeRemaining: number;
   isRunning: boolean;
   isPaused: boolean;

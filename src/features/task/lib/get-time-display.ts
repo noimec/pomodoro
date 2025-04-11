@@ -1,7 +1,14 @@
-import { timerStore } from '@/entities/timer';
+import { useSelector } from 'react-redux';
+
+import { RootState } from '@/entities/timer';
+import { useGetTasksQuery } from '@/entities/timer/services';
 
 export const getTimeDisplay = () => {
-  const { tasks, timeRemaining } = timerStore();
+  const userId = useSelector((state: RootState) => state.timer.userId);
+
+  const { data: tasks } = useGetTasksQuery(userId || '', { skip: !userId });
+
+  const timeRemaining = useSelector((state: RootState) => state.timer.timeRemaining);
 
   const hours = Math.floor(timeRemaining / 60);
   const hoursString = `${hours} час `;
@@ -9,7 +16,7 @@ export const getTimeDisplay = () => {
 
   return {
     hours,
-    tasks,
+    tasks: tasks || [],
     hoursString,
     minutesString,
   };

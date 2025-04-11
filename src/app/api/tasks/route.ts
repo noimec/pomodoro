@@ -44,12 +44,12 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  const { id, title } = await request.json();
+  const { id, ...data } = await request.json();
 
   try {
     const task = await prisma.task.update({
       where: { id },
-      data: { title },
+      data,
     });
     return NextResponse.json(task);
   } catch (error) {

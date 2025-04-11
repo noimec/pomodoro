@@ -5,10 +5,15 @@ import clsx from 'clsx';
 import { TimerHeader } from './timer-header';
 import { TimerButtons } from './timer-buttons';
 import { TimerDisplay } from './timer-display';
-import { timerStore } from '@/entities/timer';
+import { useGetTasksQuery, useGetUserQuery } from '@/entities/timer/services';
 
 export const Timer = () => {
-  const { tasks } = timerStore();
+  const { data: userId } = useGetUserQuery();
+  const { data: tasksData } = useGetTasksQuery(userId || '', { skip: !userId });
+  const tasks = tasksData?.tasks;
+
+  if (!tasks) return;
+
   return (
     <div className='relative w-[60%] h-[510px] flex flex-col justify-start items-start bg-[#C4C4C4]'>
       <TimerHeader />

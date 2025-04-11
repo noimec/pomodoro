@@ -3,10 +3,10 @@ import clsx from 'clsx';
 import { SvgMinus, SvgPlus } from '@/shared/ui/icons';
 
 import { formatTime } from '../lib/format-time';
-import { getTimerData } from '../lib/get-timer-data';
+import { useTimerData } from '../lib/use-timer-data';
 
 export const TimerDisplay = () => {
-  const { timeRemaining, isRunning } = getTimerData();
+  const { timeRemaining, isRunning } = useTimerData();
   const timer = formatTime(timeRemaining);
 
   return (

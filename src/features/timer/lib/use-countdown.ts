@@ -1,36 +1,49 @@
 'use client';
 
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
-import { Stat, timerStore } from '@/entities/timer';
+import { Stat } from '@prisma/client';
+import { RootState } from '@/entities/timer';
+import {
+  useGetTasksQuery,
+  useStartTimerMutation,
+  usePauseTimerMutation,
+  useResumeTimerMutation,
+  useSkipTimerMutation,
+  useCompleteTimerMutation,
+  updateTimeRemaining,
+  addStat,
+  resetTimer,
+  setTimer,
+  pauseTimer,
+  resumeTimer,
+} from '@/entities/timer/services';
 import { UseCountdownReturn } from './types';
 
 export const useCountdown = (): UseCountdownReturn => {
-  const {
-    tasks,
-    currentTimer,
-    timeRemaining,
-    isRunning,
-    isPaused,
-    startTimer,
-    pauseTimer,
-    resumeTimer,
-    skipTimer,
-    resetTimer,
-    currentTaskId,
-    addStat,
-    userId,
-  } = timerStore();
+  const dispatch = useDispatch();
+
+  const { currentTimer, timeRemaining, isRunning, isPaused, currentTaskId, userId } = useSelector(
+    (state: RootState) => state.timer,
+  );
+
+  const { data: tasks } = useGetTasksQuery(userId || '', { skip: !userId });
+
+  const [startTimer] = useStartTimerMutation();
+  const [pauseTimerApi] = usePauseTimerMutation();
+  const [resumeTimerApi] = useResumeTimerMutation();
+  const [skipTimerApi] = useSkipTimerMutation();
+  const [completeTimerApi] = useCompleteTimerMutation();
 
   useEffect(() => {
-    if (!userId) return;
-    if (!isRunning || isPaused || !currentTimer?.startTime) return;
+    if (!userId || !isRunning || isPaused || !currentTimer?.startTime) return;
 
     const updateTime = () => {
       const now = new Date();
       const elapsed = now.getTime() - currentTimer.startTime!.getTime();
       const remaining = Math.max(currentTimer.duration * 1000 - elapsed, 0);
-      timerStore.setState({ timeRemaining: remaining });
+      dispatch(updateTimeRemaining(remaining));
 
       if (remaining <= 0) {
         handleTimerEnd();
@@ -39,16 +52,12 @@ export const useCountdown = (): UseCountdownReturn => {
 
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, [isPaused, isRunning, currentTimer]);
+  }, [isRunning, isPaused, currentTimer, userId, dispatch]);
 
   const handleTimerEnd = async () => {
-    const { currentTimer } = timerStore.getState();
-    if (!currentTimer || !userId) return;
+    if (!currentTimer || !userId || !tasks) return;
 
-    await fetch('/api/timer', {
-      method: 'PATCH',
-      body: JSON.stringify({ id: currentTimer.id, action: 'complete' }),
-    });
+    await completeTimerApi(currentTimer.id);
 
     const stat: Stat = {
       userId,
@@ -57,33 +66,16 @@ export const useCountdown = (): UseCountdownReturn => {
       pauseTime: currentTimer.type === 'pause' ? currentTimer.duration : 0,
       pomodorosDone: currentTimer.type === 'work' ? 1 : 0,
       skipCount: 0,
+      id: currentTimer.id,
     };
-    addStat(stat);
+    dispatch(addStat(stat));
 
     await fetch('/api/statistics', {
       method: 'POST',
       body: JSON.stringify(stat),
     });
 
-    timerStore.setState((state) => {
-      const newTasks = currentTimer.taskId
-        ? state.tasks.map((task) =>
-            task.id === currentTimer.taskId
-              ? {
-                  ...task,
-                  pomodoros: task.pomodoros - 1,
-                  completed: task.pomodoros - 1 <= 0,
-                }
-              : task,
-          )
-        : state.tasks;
-      return {
-        tasks: newTasks,
-        currentTimer: null,
-        isRunning: false,
-        timeRemaining: 0,
-      };
-    });
+    dispatch(resetTimer());
 
     if (currentTimer.type === 'work') {
       const pauseDuration =
@@ -92,15 +84,42 @@ export const useCountdown = (): UseCountdownReturn => {
         0
           ? 15 * 60
           : 5 * 60;
-      startTimer(null, pauseDuration, 'pause', userId);
+      startTimer({ taskId: null, duration: pauseDuration, type: 'pause', userId })
+        .unwrap()
+        .then((timer) => dispatch(setTimer(timer)));
     }
   };
 
+  const start = () => {
+    if (!userId) return;
+    startTimer({ taskId: currentTaskId, duration: 25 * 60, type: 'work', userId })
+      .unwrap()
+      .then((timer) => dispatch(setTimer(timer)));
+  };
+
+  const pause = () => {
+    if (!currentTimer) return;
+    pauseTimerApi(currentTimer.id);
+    dispatch(pauseTimer());
+  };
+
+  const resume = () => {
+    if (!currentTimer) return;
+    resumeTimerApi(currentTimer.id);
+    dispatch(resumeTimer());
+  };
+
+  const skip = () => {
+    if (!currentTimer) return;
+    skipTimerApi(currentTimer.id);
+    dispatch(resetTimer());
+  };
+
   return {
-    start: () => startTimer(currentTaskId, 25 * 60, 'work', userId!),
-    pause: pauseTimer,
-    resume: resumeTimer,
-    skip: skipTimer,
+    start,
+    pause,
+    resume,
+    skip,
     timeRemaining,
     isRunning,
     isPaused,

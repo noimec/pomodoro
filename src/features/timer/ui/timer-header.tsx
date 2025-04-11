@@ -1,9 +1,8 @@
 import clsx from 'clsx';
-
-import { getTimerData } from '../lib/get-timer-data';
+import { useTimerData } from '../lib/use-timer-data';
 
 export const TimerHeader = () => {
-  const { isRunning, tasksIsEmpty, tasks, isPaused } = getTimerData();
+  const { isRunning, tasksIsEmpty, tasks, isPaused } = useTimerData();
 
   return (
     <div

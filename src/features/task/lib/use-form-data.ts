@@ -1,38 +1,36 @@
 'use client';
 
-import { timerStore } from '@/entities/timer';
-import { ChangeEvent, useState, useEffect } from 'react';
+import { ChangeEvent, useState } from 'react';
+import { useAddTaskMutation, useGetUserQuery } from '@/entities/timer/services';
 
 export const useFormData = () => {
-  const { addTask, userId, initialize } = timerStore();
+  const { data: userId, isLoading, isSuccess, isError, error } = useGetUserQuery();
+  const [addTask] = useAddTaskMutation();
   const [inputValue, setInputValue] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (!userId) {
-      initialize()
-        .then(() => setIsLoading(false))
-        .catch((error) => {
-          console.error('Failed to initialize:', error);
-          setIsLoading(false);
-        });
-    } else {
-      setIsLoading(false);
-    }
-  }, [userId, initialize]);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
-  const handleSubmit = () => {
-    if (!inputValue || !userId) {
-      console.error('Cannot submit: inputValue or userId is missing');
+  const handleSubmit = async () => {
+    console.log('Отправка:', { inputValue, userId, isLoading, isSuccess });
+
+    if (!inputValue) {
+      console.error('Невозможно отправить: отсутствует inputValue');
       return;
     }
 
-    addTask(inputValue, userId);
-    setInputValue('');
+    if (!isSuccess || !userId) {
+      console.error('Невозможно отправить: userId недоступен', { isLoading, isError, error });
+      return;
+    }
+
+    try {
+      await addTask({ title: inputValue, userId }).unwrap();
+      setInputValue('');
+    } catch (error) {
+      console.error('Ошибка при добавлении задачи:', error);
+    }
   };
 
   return {
@@ -40,5 +38,7 @@ export const useFormData = () => {
     onChange,
     handleSubmit,
     isLoading,
+    isError,
+    error,
   };
 };
